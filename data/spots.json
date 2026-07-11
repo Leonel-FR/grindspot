@@ -1,0 +1,41 @@
+[
+  {
+    "id": "spot-1",
+    "name": "Café Amena",
+    "priceRange": "$100 - $200",
+    "lat": 19.4145,
+    "lng": -99.1625,
+    "image": "/spots/amena.webp",
+    "address": "Calle Falsa 123, Roma Norte",
+    "wifiSpeed": "45 Mbps",
+    "outlets": "A lot",
+    "noiseLevel": "low",
+    "busyHours": "9-11am relaxed, 2-5pm full"
+  },
+  {
+    "id": "spot-2",
+    "name": "La Esquina",
+    "priceRange": "$150 - $200",
+    "lat": 19.4126,
+    "lng": -99.1710,
+    "image": "/spots/spot-2.webp",
+    "address": "Av. Michoacán 45, Condesa",
+    "wifiSpeed": "20 Mbps",
+    "outlets": "Few",
+    "noiseLevel": "medium",
+    "busyHours": "Busy all day"
+  },
+  {
+    "id": "spot-3",
+    "name": "Punto Negro",
+    "priceRange": "$200 - $300",
+    "lat": 19.4285,
+    "lng": -99.1650,
+    "image": "/spots/spot-3.jpeg",
+    "address": "Río Lerma 22, Juárez",
+    "wifiSpeed": "80 Mbps",
+    "outlets": "A lot",
+    "noiseLevel": "low",
+    "busyHours": "10am-1pm relaxed, 3-6pm full"
+  }
+]
