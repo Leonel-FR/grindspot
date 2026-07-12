@@ -11,7 +11,11 @@
     "wifiSpeed": "45 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "9-11am relaxed, 2-5pm full"
+    "busyHours": "9-11am relaxed, 2-5pm full",
+    "rating": 4.2,
+    "workFriendly": 85,
+    "quiet": 75,
+    "value": 85
   },
   {
     "id": "spot-2",
@@ -25,7 +29,11 @@
     "wifiSpeed": "20 Mbps",
     "outlets": "Few",
     "noiseLevel": "medium",
-    "busyHours": "Busy all day"
+    "busyHours": "Busy all day",
+    "rating": 3.8,
+    "workFriendly": 45,
+    "quiet": 35,
+    "value": 60
   },
   {
     "id": "spot-3",
@@ -39,7 +47,11 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.5,
+    "workFriendly": 90,
+    "quiet": 80,
+    "value": 78
   },
   {
     "id": "spot-4",
@@ -53,7 +65,11 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.4,
+    "workFriendly": 88,
+    "quiet": 78,
+    "value": 76
   },
   {
     "id": "spot-5",
@@ -67,7 +83,11 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.0,
+    "workFriendly": 92,
+    "quiet": 62,
+    "value": 68
   },
   {
     "id": "spot-6",
@@ -81,7 +101,11 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.4,
+    "workFriendly": 92,
+    "quiet": 85,
+    "value": 74
   },
   {
     "id": "spot-7",
@@ -95,7 +119,11 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.0,
+    "workFriendly": 70,
+    "quiet": 58,
+    "value": 78
   },
   {
     "id": "spot-8",
@@ -109,6 +137,10 @@
     "wifiSpeed": "80 Mbps",
     "outlets": "A lot",
     "noiseLevel": "low",
-    "busyHours": "10am-1pm relaxed, 3-6pm full"
+    "busyHours": "10am-1pm relaxed, 3-6pm full",
+    "rating": 4.6,
+    "workFriendly": 88,
+    "quiet": 80,
+    "value": 80
   }
 ]
