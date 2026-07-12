@@ -1,8 +1,12 @@
 import Image from "next/image";
+import StatBar from "@/components/StatBar";
 
-export default function SpotCard({ spot }) {
+export default function SpotCard({ spot, onClick }) {
   return (
-    <div className="group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white">
+    <div
+      onClick={onClick}
+      className="group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white"
+    >
       <div className="bg-secondary relative aspect-5/4.5">
         <Image src={spot.image} alt={spot.name} fill className="object-cover" />
 
@@ -16,10 +20,14 @@ export default function SpotCard({ spot }) {
         </div>
 
         <div className="absolute inset-0 flex flex-col justify-center gap-4 bg-black/70 px-6 opacity-0 transition-opacity duration-50 group-hover:opacity-100">
-          <StatBar label="⭐️ Rating" value={(spot.rating / 5) * 100} />
-          <StatBar label="💻 Work" value={spot.workFriendly} />
-          <StatBar label="🤫 Quiet" value={spot.quiet} />
-          <StatBar label="💰 Value" value={spot.value} />
+          <StatBar
+            label="⭐️ Rating"
+            value={(spot.rating / 5) * 100}
+            animateOnHover
+          />
+          <StatBar label="💻 Work" value={spot.workFriendly} animateOnHover />
+          <StatBar label="🤫 Quiet" value={spot.quiet} animateOnHover />
+          <StatBar label="💰 Value" value={spot.value} animateOnHover />
         </div>
 
         <span className="absolute right-2 bottom-2 rounded px-2 py-1 text-lg font-bold text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">
@@ -28,24 +36,4 @@ export default function SpotCard({ spot }) {
       </div>
     </div>
   );
-}
-
-function StatBar({ label, value }) {
-  return (
-    <div className="flex items-center gap-15">
-      <span className="text-sm- w-17 shrink-0 text-white">{label}</span>
-      <div className="mt-1 h-6 w-full rounded-full bg-white/20">
-        <div
-          className={`h-full w-0 rounded-l-full transition-[width] duration-225 ease-out ${`group-hover:w-(--fill)`} ${getBarColor(value)}`}
-          style={{ "--fill": `${value}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function getBarColor(value) {
-  if (value < 40) return "bg-[#ff4843]";
-  if (value < 70) return "bg-[#ffc925]";
-  return "bg-[#2bde73]";
 }
