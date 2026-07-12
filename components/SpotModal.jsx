@@ -4,7 +4,7 @@ import StatBar from "@/components/StatBar";
 export default function SpotModal({ spot, onClose }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 px-4 py-6"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -16,12 +16,12 @@ export default function SpotModal({ spot, onClose }) {
         <button
           onClick={onClose}
           aria-label="Close"
-          className="text-ink absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90"
+          className="text-ink absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/50"
         >
           ✕
         </button>
 
-        <div className="relative aspect-[5/4.5] w-full shrink-0 md:aspect-auto md:h-full md:w-2/5">
+        <div className="relative aspect-5/4.5 w-full shrink-0 md:aspect-auto md:w-2/5">
           <Image
             src={spot.image}
             alt={spot.name}
