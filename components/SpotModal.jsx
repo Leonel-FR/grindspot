@@ -16,7 +16,7 @@ export default function SpotModal({ spot, onClose }) {
         <button
           onClick={onClose}
           aria-label="Close"
-          className="text-ink absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/50"
+          className="text-ink absolute top-4 right-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/50"
         >
           ✕
         </button>

@@ -33,13 +33,13 @@ export default function Hero() {
       </div>
 
       <svg
-        className="absolute bottom-0 left-0 h-20 w-full md:h-32"
-        viewBox="0 0 1440 200"
+        className="absolute bottom-0 left-0 h-24 w-full md:h-40"
+        viewBox="0 0 1440 220"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M0,100 C360,200 1080,0 1440,100 L1440,200 L0,200 Z"
+          d="M0,110 C300,240 1140,-20 1440,110 L1440,220 L0,220 Z"
           fill="#FFFFFF"
         />
       </svg>

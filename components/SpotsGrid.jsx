@@ -4,6 +4,7 @@ import { useState } from "react";
 import spots from "@/data/spots.json";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
+import FilterBar from "@/components/FilterBar";
 
 export default function SpotsGrid() {
   const [selectedSpot, setSelectedSpot] = useState(null);
@@ -14,6 +15,7 @@ export default function SpotsGrid() {
         {spots.length} spots to work from
       </h2>
       */}
+      <FilterBar />
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {spots.map((spot) => (
           <SpotCard
