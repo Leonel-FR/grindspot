@@ -85,7 +85,7 @@ export default function MultiSelectDropdown({
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
         onKeyDown={handleTriggerKeyDown}
-        className={`flex w-full items-center justify-between gap-2 rounded-3xl border-2 bg-white px-4 py-2 font-bold text-black transition-colors focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none sm:w-auto sm:min-w-40 ${
+        className={`flex w-full cursor-pointer items-center justify-between gap-2 rounded-3xl border-2 bg-white px-4 py-2 font-bold text-black transition-colors focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none sm:w-auto sm:min-w-40 ${
           open || hasSelection ? "border-[#FF5A5F]" : "border-gray-300"
         }`}
       >
