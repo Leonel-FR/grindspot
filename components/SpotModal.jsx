@@ -44,10 +44,15 @@ export default function SpotModal({ spot, onClose }) {
           </p>
 
           <div className="mt-6 flex flex-col gap-4">
-            <StatBar label="⭐️ Rating" value={(spot.rating / 5) * 100} light />
-            <StatBar label="💻 Work" value={spot.workFriendly} light />
-            <StatBar label="🤫 Quiet" value={spot.quiet} light />
-            <StatBar label="💰 Value" value={spot.value} light />
+            <StatBar
+              label="⭐️ Rating"
+              value={(spot.rating / 5) * 100}
+              light
+              animateOnMount
+            />
+            <StatBar label="💻 Work" value={spot.workFriendly} light animateOnMount />
+            <StatBar label="🤫 Quiet" value={spot.quiet} light animateOnMount />
+            <StatBar label="💰 Value" value={spot.value} light animateOnMount />
           </div>
 
           <ul className="pt-6 font-semibold">

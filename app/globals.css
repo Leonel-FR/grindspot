@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-fill-up: fill-up 225ms ease-out;
+}
+
+@keyframes fill-up {
+  from {
+    width: 0;
+  }
+}
+
 ::selection {
   background-color: #fff48f;
 }

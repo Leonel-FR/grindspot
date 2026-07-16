@@ -9,10 +9,13 @@ export default function StatBar({
   value,
   light = false,
   animateOnHover = false,
+  animateOnMount = false,
 }) {
   const fillClass = animateOnHover
     ? "w-0 transition-[width] duration-225 ease-out group-hover:w-(--fill)"
-    : "w-(--fill) transition-[width] duration-225 ease-out";
+    : animateOnMount
+      ? "w-(--fill) animate-fill-up"
+      : "w-(--fill) transition-[width] duration-225 ease-out";
 
   return (
     <div className="flex items-center gap-3">
@@ -22,7 +25,7 @@ export default function StatBar({
         {label}
       </span>
       <div
-        className={`h-6 w-full rounded-full ${light ? "bg-secondary" : "bg-white/20"}`}
+        className={`h-6 w-full rounded-full ${light ? "bg-gray-100" : "bg-white/20"}`}
       >
         <div
           className={`h-full rounded-l-full ${fillClass} ${getBarColor(value)}`}
