@@ -14,7 +14,7 @@ export default function SpotModal({ spot, onClose }) {
       aria-modal="true"
     >
       <div
-        className="relative flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-2xl bg-white sm:max-w-lg md:max-h-[80vh] md:max-w-3xl md:flex-row md:overflow-hidden"
+        className="relative flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-2xl bg-white sm:max-w-lg md:h-[min(80vh,50vw,32rem)] md:max-w-4xl md:flex-row md:overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -25,7 +25,7 @@ export default function SpotModal({ spot, onClose }) {
           ✕
         </button>
 
-        <div className="relative aspect-5/4.5 w-full shrink-0 md:aspect-auto md:w-2/5">
+        <div className="relative aspect-5/4.5 w-full shrink-0 md:aspect-square md:h-full md:w-auto">
           <Image
             src={spot.image}
             alt={spot.name}
@@ -34,7 +34,7 @@ export default function SpotModal({ spot, onClose }) {
           />
         </div>
 
-        <div className="p-5 sm:p-6 md:w-3/5 md:overflow-y-auto">
+        <div className="min-w-0 p-5 sm:p-6 md:flex-1 md:overflow-y-auto">
           <h2 className="font-display text-ink text-xl font-bold sm:text-2xl">
             {spot.name}
           </h2>
