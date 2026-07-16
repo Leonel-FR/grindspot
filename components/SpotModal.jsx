@@ -2,6 +2,10 @@ import Image from "next/image";
 import StatBar from "@/components/StatBar";
 
 export default function SpotModal({ spot, onClose }) {
+  function formatHours(hours) {
+    if (!hours || hours.closed) return "Closed";
+    return `${hours.open} - ${hours.close}`;
+  }
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 px-4 py-6"
@@ -46,9 +50,14 @@ export default function SpotModal({ spot, onClose }) {
             <StatBar label="💰 Value" value={spot.value} light />
           </div>
 
-          {spot.busyHours && (
-            <p className="text-muted mt-4 text-sm">🕑 {spot.busyHours}</p>
-          )}
+          <ul className="pt-6 font-semibold">
+            {Object.entries(spot.hours).map(([day, hours]) => (
+              <li key={day} className="flex justify-between">
+                <span className="capitalize">{day}</span>
+                <span>🕐 {formatHours(hours)}</span>
+              </li>
+            ))}
+          </ul>
 
           <a
             href={spot.mapsUrl}

@@ -16,7 +16,17 @@
     "rating": 4.2,
     "workFriendly": 85,
     "quiet": 75,
-    "value": 85
+    "value": 85,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "open": "08:00", "close": "23:00" }
+    }
   },
   {
     "id": "spot-2",
@@ -35,7 +45,17 @@
     "rating": 3.8,
     "workFriendly": 45,
     "quiet": 35,
-    "value": 60
+    "value": 60,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "open": "08:00", "close": "23:00" }
+    }
   },
   {
     "id": "spot-3",
@@ -54,7 +74,17 @@
     "rating": 4.5,
     "workFriendly": 90,
     "quiet": 80,
-    "value": 78
+    "value": 78,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "open": "08:00", "close": "23:00" }
+    }
   },
   {
     "id": "spot-4",
@@ -73,7 +103,17 @@
     "rating": 4.4,
     "workFriendly": 88,
     "quiet": 78,
-    "value": 76
+    "value": 76,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "open": "08:00", "close": "23:00" }
+    }
   },
   {
     "id": "spot-5",
@@ -92,7 +132,17 @@
     "rating": 4.0,
     "workFriendly": 92,
     "quiet": 62,
-    "value": 68
+    "value": 68,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "open": "08:00", "close": "23:00" }
+    }
   },
   {
     "id": "spot-6",
@@ -111,7 +161,17 @@
     "rating": 4.4,
     "workFriendly": 92,
     "quiet": 85,
-    "value": 74
+    "value": 74,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "closed": true }
+    }
   },
   {
     "id": "spot-7",
@@ -130,7 +190,17 @@
     "rating": 4.0,
     "workFriendly": 70,
     "quiet": 58,
-    "value": 78
+    "value": 78,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "closed": true }
+    }
   },
   {
     "id": "spot-8",
@@ -149,6 +219,16 @@
     "rating": 4.6,
     "workFriendly": 88,
     "quiet": 80,
-    "value": 80
+    "value": 80,
+    "timezone": "America/Mexico_City",
+    "hours": {
+      "monday": { "open": "08:00", "close": "23:00" },
+      "tuesday": { "open": "08:00", "close": "23:00" },
+      "wednesday": { "open": "08:00", "close": "23:00" },
+      "thursday": { "open": "08:00", "close": "23:00" },
+      "friday": { "open": "08:00", "close": "23:00" },
+      "saturday": { "open": "08:00", "close": "23:00" },
+      "sunday": { "closed": true }
+    }
   }
 ]
