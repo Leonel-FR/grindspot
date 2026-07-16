@@ -3,7 +3,7 @@ import StatBar from "@/components/StatBar";
 
 export default function SpotModal({ spot, onClose }) {
   function formatHours(hours) {
-    if (!hours || hours.closed) return "Closed";
+    if (!hours || hours.closed) return "❌ Closed";
     return `${hours.open} - ${hours.close}`;
   }
   return (
@@ -54,7 +54,7 @@ export default function SpotModal({ spot, onClose }) {
             {Object.entries(spot.hours).map(([day, hours]) => (
               <li key={day} className="flex justify-between">
                 <span className="capitalize">{day}</span>
-                <span>🕐 {formatHours(hours)}</span>
+                <span>{formatHours(hours)}</span>
               </li>
             ))}
           </ul>
