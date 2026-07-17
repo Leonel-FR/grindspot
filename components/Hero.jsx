@@ -23,11 +23,11 @@ export default function Hero() {
       </button>
 
       <div className="relative z-10 flex flex-col items-center space-y-5 text-center md:space-y-6">
-        <h1 className="max-w-4xl text-4xl leading-none font-black tracking-[-0.4px] text-white md:max-w-6xl md:text-6xl">
+        <h1 className="max-w-4xl text-4xl leading-none font-black tracking-[-0.4px] text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:max-w-6xl md:text-6xl">
           Find your next remote work spot,
           <br className="hidden md:block" /> verified before you go
         </h1>
-        <p className="max-w-lg text-base leading-relaxed font-normal text-white/80">
+        <p className="max-w-lg text-base leading-relaxed font-normal text-white/80 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)]">
           Your next great work session is closer than you think. Explore the
           best spots in the city, all in one place.
         </p>
@@ -41,10 +41,7 @@ export default function Hero() {
         </button>
       </div>
 
-      <EmailModal
-        isOpen={modalOpened}
-        onClose={() => setModalOpened(false)}
-      />
+      <EmailModal isOpen={modalOpened} onClose={() => setModalOpened(false)} />
 
       <svg
         className="absolute bottom-0 left-0 h-24 w-full md:h-40"

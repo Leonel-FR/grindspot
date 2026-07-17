@@ -3,6 +3,7 @@
 import { useState } from "react";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import EmailModal from "@/components/EmailModal";
 
 const CITY_OPTIONS = ["📍 Guadalajara", "🏙️ CDMX", "⛰️ Monterrey"];
 const PRICE_OPTIONS = ["💵 $100 - $200", "💸 $150 - $200", "💰 $200 - $300"];
@@ -15,6 +16,7 @@ export default function FilterBar() {
   const [placeTypes, setPlaceTypes] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const sections = [
     {
@@ -88,10 +90,20 @@ export default function FilterBar() {
           />
         ))}
 
-        <button className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md">
+        <button
+          className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
+          onClick={() => {
+            setModalOpened(true);
+          }}
+        >
           Join GrindSpot.com
         </button>
       </div>
+
+      <EmailModal
+        isOpen={modalOpened}
+        onClose={() => setModalOpened(false)}
+      />
 
       {sheetOpen && (
         <MobileFilterSheet
