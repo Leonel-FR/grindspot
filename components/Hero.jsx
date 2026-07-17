@@ -1,4 +1,8 @@
+"use client";
+import { useState } from "react";
+import EmailModal from "./EmailModal";
 export default function Hero() {
+  const [modalOpened, setModalOpened] = useState(false);
   return (
     <section className="relative overflow-hidden px-6 py-20 md:py-32">
       <video
@@ -14,7 +18,7 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/35" />
 
-      <button className="absolute top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-5 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-6 md:py-3 md:text-base">
+      <button className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base">
         Login
       </button>
 
@@ -27,9 +31,20 @@ export default function Hero() {
           Your next great work session is closer than you think. Explore the
           best spots in the city, all in one place.
         </p>
-        <button className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white">
+        <button
+          className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
+          onClick={() => {
+            setModalOpened(true);
+          }}
+        >
           Get Started
         </button>
+        {modalOpened && (
+          <EmailModal
+            isOpen={modalOpened}
+            onClose={() => setModalOpened(false)}
+          />
+        )}
       </div>
 
       <svg
