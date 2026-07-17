@@ -39,13 +39,12 @@ export default function Hero() {
         >
           Get Started
         </button>
-        {modalOpened && (
-          <EmailModal
-            isOpen={modalOpened}
-            onClose={() => setModalOpened(false)}
-          />
-        )}
       </div>
+
+      <EmailModal
+        isOpen={modalOpened}
+        onClose={() => setModalOpened(false)}
+      />
 
       <svg
         className="absolute bottom-0 left-0 h-24 w-full md:h-40"

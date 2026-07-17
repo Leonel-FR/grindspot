@@ -15,7 +15,7 @@ export default function EmailModal({ isOpen, onClose }) {
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
+          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-gray-500"
         >
           ✕
         </button>
