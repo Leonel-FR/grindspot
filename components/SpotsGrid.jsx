@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import spots from "@/data/spots.json";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 
-export default function SpotsGrid() {
+export default function SpotsGrid({ spots }) {
   const [selectedSpot, setSelectedSpot] = useState(null);
 
   return (

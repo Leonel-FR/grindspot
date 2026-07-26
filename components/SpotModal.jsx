@@ -6,6 +6,17 @@ export default function SpotModal({ spot, onClose }) {
     if (!hours || hours.closed) return "❌ Closed";
     return `${hours.open} - ${hours.close}`;
   }
+
+  const Days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 px-4 py-6"
@@ -50,18 +61,26 @@ export default function SpotModal({ spot, onClose }) {
               light
               animateOnMount
             />
-            <StatBar label="💻 Work" value={spot.workFriendly} light animateOnMount />
+            <StatBar
+              label="💻 Work"
+              value={spot.workFriendly}
+              light
+              animateOnMount
+            />
             <StatBar label="🤫 Quiet" value={spot.quiet} light animateOnMount />
             <StatBar label="💰 Value" value={spot.value} light animateOnMount />
           </div>
 
           <ul className="pt-6 font-semibold">
-            {Object.entries(spot.hours).map(([day, hours]) => (
-              <li key={day} className="flex justify-between">
-                <span className="capitalize">{day}</span>
-                <span>{formatHours(hours)}</span>
-              </li>
-            ))}
+            {Days.map((day) => {
+              const schedules = spot.hours[day];
+              return (
+                <li key={day} className="flex justify-between">
+                  <span className="capitalize">{day}</span>
+                  <span>{formatHours(schedules)}</span>
+                </li>
+              );
+            })}
           </ul>
 
           <a

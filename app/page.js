@@ -1,12 +1,15 @@
 import Hero from "@/components/Hero";
 import SpotsGrid from "@/components/SpotsGrid";
-export default function Home() {
+import { getSpots } from "@/lib/spots";
+
+export default async function Home() {
+  const spots = await getSpots();
+
   return (
     <main>
       <Hero />
-      <SpotsGrid />
+      <SpotsGrid spots={spots} />
     </main>
-    
   );
 }
 
