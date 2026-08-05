@@ -1,7 +1,10 @@
 import Image from "next/image";
 import StatBar from "@/components/StatBar";
+import { isSpotOpenNow } from "@/lib/isOpenNow";
 
 export default function SpotCard({ spot, onClick }) {
+  const openNow = isSpotOpenNow(spot);
+
   return (
     <div
       onClick={onClick}
@@ -35,8 +38,7 @@ export default function SpotCard({ spot, onClick }) {
         </span>
 
         <span className="absolute bottom-2 left-2 rounded px-2 py-1 text-lg font-bold text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">
-          ✅ Opened
-          
+          {openNow ? "✅ Opened" : "❌ Closed"}
         </span>
       </div>
     </div>
