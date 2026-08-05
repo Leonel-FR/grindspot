@@ -25,7 +25,7 @@ export default function StatBar({
         {label}
       </span>
       <div
-        className={`h-6 w-full rounded-full ${light ? "bg-gray-100" : "bg-white/20"}`}
+        className={`h-6 w-full overflow-hidden rounded-full ${light ? "bg-gray-100" : "bg-white/20"}`}
       >
         <div
           className={`h-full rounded-l-full ${fillClass} ${getBarColor(value)}`}
