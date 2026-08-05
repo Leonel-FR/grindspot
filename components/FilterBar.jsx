@@ -4,9 +4,9 @@ import { useState } from "react";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import EmailModal from "@/components/EmailModal";
+import { PRICE_RANGES } from "@/lib/priceRanges";
 
-const CITY_OPTIONS = ["📍 Guadalajara", "🏙️ CDMX", "⛰️ Monterrey"];
-const PRICE_OPTIONS = ["💵 $100 - $200", "💸 $150 - $200", "💰 $200 - $300"];
+const PRICE_OPTIONS = PRICE_RANGES.map((range) => range.label);
 const PLACE_TYPE_OPTIONS = ["☕ Café", "📚 Library", "💻 Coworking", "🌳 Park"];
 const RATING_OPTIONS = ["⭐️ Low", "⭐️⭐️ Medium", "⭐️⭐️⭐️ High"];
 
@@ -47,9 +47,17 @@ function OpenNowToggle({ checked, onChange, className = "" }) {
   );
 }
 
-export default function FilterBar({ openNow, onOpenNowChange }) {
-  const [cities, setCities] = useState([]);
-  const [prices, setPrices] = useState([]);
+export default function FilterBar({
+  openNow,
+  onOpenNowChange,
+  cityOptions,
+  cities,
+  onCitiesChange,
+  prices,
+  onPricesChange,
+  search,
+  onSearchChange,
+}) {
   const [placeTypes, setPlaceTypes] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -58,15 +66,15 @@ export default function FilterBar({ openNow, onOpenNowChange }) {
   const sections = [
     {
       title: "City",
-      options: CITY_OPTIONS,
+      options: cityOptions,
       selected: cities,
-      onChange: setCities,
+      onChange: onCitiesChange,
     },
     {
       title: "Price",
       options: PRICE_OPTIONS,
       selected: prices,
-      onChange: setPrices,
+      onChange: onPricesChange,
     },
     {
       title: "Place type",
@@ -105,6 +113,8 @@ export default function FilterBar({ openNow, onOpenNowChange }) {
         </button>
         <input
           type="text"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search for name"
           className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         />
@@ -117,6 +127,8 @@ export default function FilterBar({ openNow, onOpenNowChange }) {
       <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <input
           type="text"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search for name"
           className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         />
