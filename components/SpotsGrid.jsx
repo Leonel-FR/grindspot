@@ -55,15 +55,21 @@ export default function SpotsGrid({ spots }) {
         onSearchChange={setSearch}
         resultsCount={visibleSpots.length}
       />
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {visibleSpots.map((spot) => (
-          <SpotCard
-            key={spot.id}
-            spot={spot}
-            onClick={() => setSelectedSpot(spot)}
-          />
-        ))}
-      </div>
+      {visibleSpots.length > 0 ? (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {visibleSpots.map((spot) => (
+            <SpotCard
+              key={spot.id}
+              spot={spot}
+              onClick={() => setSelectedSpot(spot)}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="py-16 text-center text-lg font-bold text-gray-500">
+          🔍 No spots found
+        </p>
+      )}
 
       {selectedSpot && (
         <SpotModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
