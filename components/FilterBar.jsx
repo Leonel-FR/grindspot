@@ -8,7 +8,6 @@ import { PRICE_RANGES } from "@/lib/priceRanges";
 import { RATING_CATEGORIES } from "@/lib/ratingCategory";
 
 const PRICE_OPTIONS = PRICE_RANGES.map((range) => range.label);
-const PLACE_TYPE_OPTIONS = ["☕ Café", "📚 Library", "💻 Coworking", "🌳 Park"];
 const RATING_OPTIONS = RATING_CATEGORIES.map((entry) => entry.label);
 
 function OpenNowToggle({ checked, onChange, className = "" }) {
@@ -56,13 +55,15 @@ export default function FilterBar({
   onCitiesChange,
   prices,
   onPricesChange,
+  placeTypeOptions,
+  placeTypes,
+  onPlaceTypesChange,
   ratings,
   onRatingsChange,
   search,
   onSearchChange,
   resultsCount,
 }) {
-  const [placeTypes, setPlaceTypes] = useState([]);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -81,9 +82,9 @@ export default function FilterBar({
     },
     {
       title: "Place type",
-      options: PLACE_TYPE_OPTIONS,
+      options: placeTypeOptions,
       selected: placeTypes,
-      onChange: setPlaceTypes,
+      onChange: onPlaceTypesChange,
     },
     {
       title: "Rating",
