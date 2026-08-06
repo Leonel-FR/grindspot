@@ -6,12 +6,14 @@ import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 import { isSpotOpenNow } from "@/lib/isOpenNow";
 import { spotMatchesPriceRanges } from "@/lib/priceRanges";
+import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 
 export default function SpotsGrid({ spots }) {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [openNow, setOpenNow] = useState(false);
   const [cities, setCities] = useState([]);
   const [prices, setPrices] = useState([]);
+  const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
 
   const cityOptions = useMemo(
@@ -26,10 +28,12 @@ export default function SpotsGrid({ spots }) {
       if (openNow && !isSpotOpenNow(spot)) return false;
       if (cities.length > 0 && !cities.includes(spot.city)) return false;
       if (prices.length > 0 && !spotMatchesPriceRanges(spot, prices)) return false;
+      if (ratings.length > 0 && !spotMatchesRatingCategories(spot, ratings))
+        return false;
       if (query && !spot.name.toLowerCase().includes(query)) return false;
       return true;
     });
-  }, [spots, openNow, cities, prices, search]);
+  }, [spots, openNow, cities, prices, ratings, search]);
 
   return (
     <section className="mx-auto max-w-345 px-6 py-1">
@@ -45,6 +49,8 @@ export default function SpotsGrid({ spots }) {
         onCitiesChange={setCities}
         prices={prices}
         onPricesChange={setPrices}
+        ratings={ratings}
+        onRatingsChange={setRatings}
         search={search}
         onSearchChange={setSearch}
       />

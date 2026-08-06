@@ -5,10 +5,11 @@ import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import EmailModal from "@/components/EmailModal";
 import { PRICE_RANGES } from "@/lib/priceRanges";
+import { RATING_CATEGORIES } from "@/lib/ratingCategory";
 
 const PRICE_OPTIONS = PRICE_RANGES.map((range) => range.label);
 const PLACE_TYPE_OPTIONS = ["☕ Café", "📚 Library", "💻 Coworking", "🌳 Park"];
-const RATING_OPTIONS = ["⭐️ Low", "⭐️⭐️ Medium", "⭐️⭐️⭐️ High"];
+const RATING_OPTIONS = RATING_CATEGORIES.map((entry) => entry.label);
 
 function OpenNowToggle({ checked, onChange, className = "" }) {
   return (
@@ -55,11 +56,12 @@ export default function FilterBar({
   onCitiesChange,
   prices,
   onPricesChange,
+  ratings,
+  onRatingsChange,
   search,
   onSearchChange,
 }) {
   const [placeTypes, setPlaceTypes] = useState([]);
-  const [ratings, setRatings] = useState([]);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -86,7 +88,7 @@ export default function FilterBar({
       title: "Rating",
       options: RATING_OPTIONS,
       selected: ratings,
-      onChange: setRatings,
+      onChange: onRatingsChange,
     },
   ];
 
