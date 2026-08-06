@@ -37,7 +37,8 @@ export default function SpotsGrid({ spots }) {
     return spots.filter((spot) => {
       if (openNow && !isSpotOpenNow(spot)) return false;
       if (cities.length > 0 && !cities.includes(spot.city)) return false;
-      if (prices.length > 0 && !spotMatchesPriceRanges(spot, prices)) return false;
+      if (prices.length > 0 && !spotMatchesPriceRanges(spot, prices))
+        return false;
       if (
         placeTypes.length > 0 &&
         !placeTypes.includes(formatPlaceType(spot.placeType))

@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import SpotsGrid from "@/components/SpotsGrid";
+import Footer from "@/components/Footer";
 import { getSpots } from "@/lib/spots";
 
 export default async function Home() {
@@ -9,6 +10,7 @@ export default async function Home() {
     <main>
       <Hero />
       <SpotsGrid spots={spots} />
+      <Footer />
     </main>
   );
 }
