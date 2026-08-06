@@ -60,6 +60,7 @@ export default function FilterBar({
   onRatingsChange,
   search,
   onSearchChange,
+  resultsCount,
 }) {
   const [placeTypes, setPlaceTypes] = useState([]);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -96,6 +97,8 @@ export default function FilterBar({
     (count, section) => count + section.selected.length,
     0
   );
+  const hasActiveFilters =
+    totalSelected > 0 || openNow || search.trim().length > 0;
 
   return (
     <div className="pb-5">
@@ -161,6 +164,8 @@ export default function FilterBar({
         <MobileFilterSheet
           sections={sections}
           onClose={() => setSheetOpen(false)}
+          resultsCount={resultsCount}
+          hasActiveFilters={hasActiveFilters}
         />
       )}
     </div>

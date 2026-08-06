@@ -2,7 +2,12 @@
 
 import { useEffect } from "react";
 
-export default function MobileFilterSheet({ sections, onClose }) {
+export default function MobileFilterSheet({
+  sections,
+  onClose,
+  resultsCount,
+  hasActiveFilters,
+}) {
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handleKeyDown = (e) => {
@@ -22,11 +27,6 @@ export default function MobileFilterSheet({ sections, onClose }) {
         : [...section.selected, option]
     );
   };
-
-  const totalSelected = sections.reduce(
-    (count, section) => count + section.selected.length,
-    0
-  );
 
   return (
     <div
@@ -94,7 +94,7 @@ export default function MobileFilterSheet({ sections, onClose }) {
         onClick={onClose}
         className="w-full bg-[#FF5A5F] py-4 text-lg font-bold text-white focus:outline-none"
       >
-        Show results{totalSelected > 0 ? ` (${totalSelected})` : ""}
+        Show results{hasActiveFilters ? ` (${resultsCount})` : ""}
       </button>
     </div>
   );
