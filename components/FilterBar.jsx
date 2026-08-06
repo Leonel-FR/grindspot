@@ -86,12 +86,13 @@ export default function FilterBar({
       selected: placeTypes,
       onChange: onPlaceTypesChange,
     },
-    {
-      title: "Rating",
-      options: RATING_OPTIONS,
-      selected: ratings,
-      onChange: onRatingsChange,
-    },
+    // Rating filter hidden for now (not in use yet), logic kept intact.
+    // {
+    //   title: "Rating",
+    //   options: RATING_OPTIONS,
+    //   selected: ratings,
+    //   onChange: onRatingsChange,
+    // },
   ];
 
   const totalSelected = sections.reduce(
