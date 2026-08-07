@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import EmailModal from "./EmailModal";
+import { signIn } from "next-auth/react";
 export default function Hero() {
   const [modalOpened, setModalOpened] = useState(false);
   return (
@@ -18,7 +19,10 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/35" />
 
-      <button className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base">
+      <button
+        className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
+        onClick={() => signIn("google")}
+      >
         Login
       </button>
 
