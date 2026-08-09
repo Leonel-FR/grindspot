@@ -1,5 +1,31 @@
+"use client";
+
+import { useState } from "react";
+
 export default function EmailModal({ isOpen, onClose }) {
+  const [loading, setLoading] = useState(false);
+
   if (!isOpen) return null;
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const email = e.target.email.value;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/billing/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  }
 
   return (
     <div
@@ -27,21 +53,20 @@ export default function EmailModal({ isOpen, onClose }) {
           Join GrindSpot and find your next favorite work spot.
         </p>
 
-        <form
-          className="mt-6 flex flex-col gap-3"
-          onSubmit={(e) => e.preventDefault()}
-        >
+        <form className="mt-6 flex flex-col gap-3" onSubmit={handleSubmit}>
           <input
             type="email"
+            name="email"
             required
             placeholder="Enter your email"
             className="text-mc text-md w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           />
           <button
             type="submit"
-            className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
+            disabled={loading}
+            className="w-full rounded-lg bg-[#ffa49f] px-4 py-3 font-medium text-white disabled:opacity-50"
           >
-            Join GrindSpot now
+            {loading ? "Redirecting..." : "Continue to checkout"}
           </button>
         </form>
       </div>

@@ -2,8 +2,12 @@
 import { useState } from "react";
 import EmailModal from "./EmailModal";
 import { signIn } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
 export default function Hero() {
   const [modalOpened, setModalOpened] = useState(false);
+  const { data: session } = useSession();
   return (
     <section className="relative overflow-hidden px-6 py-20 md:py-32">
       <video
@@ -19,12 +23,21 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/35" />
 
-      <button
-        className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
-        onClick={() => signIn("google")}
-      >
-        Login
-      </button>
+      {session ? (
+        <button
+          className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
+          onClick={() => signOut()}
+        >
+          Sign Out
+        </button>
+      ) : (
+        <button
+          className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
+          onClick={() => signIn("google")}
+        >
+          Login
+        </button>
+      )}
 
       <div className="relative z-10 flex flex-col items-center space-y-5 text-center md:space-y-6">
         <h1 className="max-w-4xl text-4xl leading-none font-black tracking-[-0.4px] text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:max-w-6xl md:text-6xl">

@@ -1,4 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
+import toast, { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,7 +24,9 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <SessionProvider>
+        <body className="flex min-h-full flex-col">{children}</body>
+      </SessionProvider>
     </html>
   );
 }
