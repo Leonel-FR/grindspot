@@ -4,19 +4,61 @@ import { useMemo, useState } from "react";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
+import EmailModal from "@/components/EmailModal";
 import { isSpotOpenNow } from "@/lib/isOpenNow";
 import { spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
 
-export default function SpotsGrid({ spots }) {
+export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
   const [cities, setCities] = useState([]);
   const [prices, setPrices] = useState([]);
   const [placeTypes, setPlaceTypes] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
+
+  // Filtering, opening a spot and liking are premium: without access the
+  // action is swapped for the sign-up modal.
+  const gate =
+    (action) =>
+    (...args) => {
+      if (!hasAccess) {
+        setEmailModalOpen(true);
+        return;
+      }
+      action(...args);
+    };
+
+  async function toggleLike(spot) {
+    const liked = likedIds.has(spot.id);
+
+    const applyLiked = (shouldLike) =>
+      setLikedIds((prev) => {
+        const next = new Set(prev);
+        if (shouldLike) {
+          next.add(spot.id);
+        } else {
+          next.delete(spot.id);
+        }
+        return next;
+      });
+
+    applyLiked(!liked);
+
+    try {
+      const res = await fetch(`/api/spots/${spot.id}/like`, {
+        method: liked ? "DELETE" : "POST",
+      });
+      if (!res.ok) throw new Error("Like request failed");
+    } catch (err) {
+      console.error(err);
+      applyLiked(liked);
+    }
+  }
 
   const cityOptions = useMemo(
     () => [...new Set(spots.map((spot) => spot.city))].sort(),
@@ -59,20 +101,21 @@ export default function SpotsGrid({ spots }) {
       */}
       <FilterBar
         openNow={openNow}
-        onOpenNowChange={setOpenNow}
+        onOpenNowChange={gate(setOpenNow)}
         cityOptions={cityOptions}
         cities={cities}
-        onCitiesChange={setCities}
+        onCitiesChange={gate(setCities)}
         prices={prices}
-        onPricesChange={setPrices}
+        onPricesChange={gate(setPrices)}
         placeTypeOptions={placeTypeOptions}
         placeTypes={placeTypes}
-        onPlaceTypesChange={setPlaceTypes}
+        onPlaceTypesChange={gate(setPlaceTypes)}
         ratings={ratings}
-        onRatingsChange={setRatings}
+        onRatingsChange={gate(setRatings)}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={gate(setSearch)}
         resultsCount={visibleSpots.length}
+        onRequestAccess={() => setEmailModalOpen(true)}
       />
       {visibleSpots.length > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -80,7 +123,9 @@ export default function SpotsGrid({ spots }) {
             <SpotCard
               key={spot.id}
               spot={spot}
-              onClick={() => setSelectedSpot(spot)}
+              onClick={gate(() => setSelectedSpot(spot))}
+              liked={likedIds.has(spot.id)}
+              onToggleLike={gate(() => toggleLike(spot))}
             />
           ))}
         </div>
@@ -93,6 +138,11 @@ export default function SpotsGrid({ spots }) {
       {selectedSpot && (
         <SpotModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
       )}
+
+      <EmailModal
+        isOpen={emailModalOpen}
+        onClose={() => setEmailModalOpen(false)}
+      />
     </section>
   );
 }

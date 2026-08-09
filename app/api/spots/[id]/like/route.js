@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth"; // ajusta el import según cómo exportas tu `auth` helper
+import { getPremiumUser } from "@/lib/access";
 import sql from "@/lib/db";
 
 export async function POST(request, { params }) {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const user = await getPremiumUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
 
   const { id: spotId } = await params;
-
-  const [user] =
-    await sql`SELECT id FROM users WHERE email = ${session.user.email}`;
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
 
   await sql`
     INSERT INTO spot_likes (user_id, spot_id) VALUES (${user.id}, ${spotId})
@@ -25,18 +19,12 @@ export async function POST(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const user = await getPremiumUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
 
   const { id: spotId } = await params;
-
-  const [user] =
-    await sql`SELECT id FROM users WHERE email = ${session.user.email}`;
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
 
   await sql`DELETE FROM spot_likes WHERE user_id = ${user.id} AND spot_id = ${spotId}`;
 

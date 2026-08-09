@@ -3,7 +3,6 @@
 import { useState } from "react";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
-import EmailModal from "@/components/EmailModal";
 import { PRICE_RANGES } from "@/lib/priceRanges";
 import { RATING_CATEGORIES } from "@/lib/ratingCategory";
 
@@ -63,9 +62,9 @@ export default function FilterBar({
   search,
   onSearchChange,
   resultsCount,
+  onRequestAccess,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [modalOpened, setModalOpened] = useState(false);
 
   const sections = [
     {
@@ -152,15 +151,11 @@ export default function FilterBar({
 
         <button
           className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
-          onClick={() => {
-            setModalOpened(true);
-          }}
+          onClick={onRequestAccess}
         >
           Join GrindSpot.com
         </button>
       </div>
-
-      <EmailModal isOpen={modalOpened} onClose={() => setModalOpened(false)} />
 
       {sheetOpen && (
         <MobileFilterSheet
