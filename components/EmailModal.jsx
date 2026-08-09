@@ -64,7 +64,7 @@ export default function EmailModal({ isOpen, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[#ffa49f] px-4 py-3 font-medium text-white disabled:opacity-50"
+            className="w-full cursor-pointer rounded-lg bg-[#FF5A5F] px-4 py-3 font-medium text-white"
           >
             {loading ? "Redirecting..." : "Continue to checkout"}
           </button>
