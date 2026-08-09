@@ -63,6 +63,7 @@ export default function FilterBar({
   onSearchChange,
   resultsCount,
   onRequestAccess,
+  hasAccess,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -149,12 +150,14 @@ export default function FilterBar({
         ))}
         <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
 
-        <button
-          className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
-          onClick={onRequestAccess}
-        >
-          Join GrindSpot.com
-        </button>
+        {!hasAccess && (
+          <button
+            className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
+            onClick={onRequestAccess}
+          >
+            Join GrindSpot.com
+          </button>
+        )}
       </div>
 
       {sheetOpen && (

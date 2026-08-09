@@ -2,10 +2,21 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 import { stripe } from "@/lib/stripe";
+import { hasAccessByEmail } from "@/lib/access";
 
 export async function POST(req) {
   try {
     const { email } = await req.json();
+
+    // Guard against paying twice: the UI hides the CTAs for users who already
+    // have access, but a stale page or a direct call could still get here.
+    if (await hasAccessByEmail(email)) {
+      return NextResponse.json(
+        { error: "You already have access to GrindSpot." },
+        { status: 409 }
+      );
+    }
+
     const headersList = await headers();
     const origin = headersList.get("origin");
 

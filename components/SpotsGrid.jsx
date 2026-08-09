@@ -21,13 +21,20 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
   const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
 
+  // Paying users have nothing to buy, so the checkout modal never opens for
+  // them — this also keeps a stale render from starting a second payment.
+  const requestAccess = () => {
+    if (hasAccess) return;
+    setEmailModalOpen(true);
+  };
+
   // Filtering, opening a spot and liking are premium: without access the
   // action is swapped for the sign-up modal.
   const gate =
     (action) =>
     (...args) => {
       if (!hasAccess) {
-        setEmailModalOpen(true);
+        requestAccess();
         return;
       }
       action(...args);
@@ -115,7 +122,8 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
         search={search}
         onSearchChange={gate(setSearch)}
         resultsCount={visibleSpots.length}
-        onRequestAccess={() => setEmailModalOpen(true)}
+        onRequestAccess={requestAccess}
+        hasAccess={hasAccess}
       />
       {visibleSpots.length > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -139,10 +147,9 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
         <SpotModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
       )}
 
-      <EmailModal
-        isOpen={emailModalOpen}
-        onClose={() => setEmailModalOpen(false)}
-      />
+      {emailModalOpen && (
+        <EmailModal onClose={() => setEmailModalOpen(false)} />
+      )}
     </section>
   );
 }

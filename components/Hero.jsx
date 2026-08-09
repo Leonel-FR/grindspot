@@ -5,9 +5,16 @@ import { signIn } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
-export default function Hero() {
+export default function Hero({ hasAccess }) {
   const [modalOpened, setModalOpened] = useState(false);
   const { data: session } = useSession();
+
+  // Paying users have nothing to buy: the CTA is hidden, and the handler
+  // refuses anyway so a stale render can't start a second checkout.
+  const openCheckout = () => {
+    if (hasAccess) return;
+    setModalOpened(true);
+  };
   return (
     <section className="relative overflow-hidden px-6 py-20 md:py-32">
       <video
@@ -48,17 +55,17 @@ export default function Hero() {
           Your next great work session is closer than you think. Explore the
           best spots in the city, all in one place.
         </p>
-        <button
-          className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
-          onClick={() => {
-            setModalOpened(true);
-          }}
-        >
-          Get Started
-        </button>
+        {!hasAccess && (
+          <button
+            className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
+            onClick={openCheckout}
+          >
+            Get Started
+          </button>
+        )}
       </div>
 
-      <EmailModal isOpen={modalOpened} onClose={() => setModalOpened(false)} />
+      {modalOpened && <EmailModal onClose={() => setModalOpened(false)} />}
 
       <svg
         className="absolute bottom-0 left-0 h-24 w-full md:h-40"

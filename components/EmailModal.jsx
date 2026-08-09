@@ -1,17 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function EmailModal({ isOpen, onClose }) {
+// Rendered only while open, so every open starts from a clean state instead of
+// inheriting the previous attempt's loading and error.
+export default function EmailModal({ onClose }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const submittingRef = useRef(false);
 
-  if (!isOpen) return null;
+  // Redirecting to Stripe never unmounts this page, so coming back through the
+  // browser's back/forward cache restores it verbatim — button included, still
+  // frozen on "Redirecting...". Clear the in-flight state on that restore.
+  useEffect(() => {
+    const handlePageShow = (e) => {
+      if (!e.persisted) return;
+      submittingRef.current = false;
+      setLoading(false);
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    // `loading` only blocks the button after a re-render; this blocks the
+    // second submit of a fast double-click within the same tick.
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
     const email = e.target.email.value;
 
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/billing/create-checkout", {
         method: "POST",
@@ -20,11 +43,22 @@ export default function EmailModal({ isOpen, onClose }) {
       });
 
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      // Covers the "already paid" guard, which returns an error instead of a URL.
+      setError(data.error || "Something went wrong. Please try again.");
     } catch (err) {
       console.error(err);
-      setLoading(false);
+      setError("Something went wrong. Please try again.");
     }
+
+    // Only reached when no redirect happened, so the user can correct the
+    // email and submit again.
+    submittingRef.current = false;
+    setLoading(false);
   }
 
   return (
@@ -64,10 +98,39 @@ export default function EmailModal({ isOpen, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full cursor-pointer rounded-lg bg-[#FF5A5F] px-4 py-3 font-medium text-white"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FF5A5F] px-4 py-3 font-medium text-white disabled:cursor-not-allowed disabled:opacity-70"
           >
+            {loading && (
+              // Sized in `em` so it tracks the button's font size at any breakpoint.
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                className="h-[1em] w-[1em] shrink-0 animate-spin"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  opacity="0.3"
+                />
+                <path
+                  d="M12 2a10 10 0 0 1 10 10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
             {loading ? "Redirecting..." : "Continue to checkout"}
           </button>
+          {error && (
+            <p role="alert" className="text-sm font-medium text-[#FF5A5F]">
+              {error}
+            </p>
+          )}
         </form>
       </div>
     </div>

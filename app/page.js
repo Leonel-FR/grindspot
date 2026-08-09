@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero />
+      <Hero hasAccess={Boolean(user)} />
       <SpotsGrid
         spots={spots}
         hasAccess={Boolean(user)}
