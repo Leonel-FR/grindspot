@@ -14,12 +14,18 @@ export default function Footer() {
             </p>
           </div>
 
-          <nav className="flex gap-6 text-sm font-bold text-gray-600">
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-bold text-gray-600 sm:justify-start">
+            <Link href="/faq" className="hover:text-[#FF5A5F]">
+              FAQ
+            </Link>
             <Link href="/terms" className="hover:text-[#FF5A5F]">
-              Terms & Conditions
+              Terms of Service
             </Link>
             <Link href="/privacy" className="hover:text-[#FF5A5F]">
               Privacy Policy
+            </Link>
+            <Link href="/cookies" className="hover:text-[#FF5A5F]">
+              Cookie Policy
             </Link>
           </nav>
         </div>
