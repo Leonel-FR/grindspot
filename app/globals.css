@@ -3,11 +3,21 @@
 
 @theme {
   --animate-fill-up: fill-up 225ms ease-out;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 }
 
 @keyframes fill-up {
   from {
     width: 0;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position-x: 200%;
+  }
+  to {
+    background-position-x: -200%;
   }
 }
 

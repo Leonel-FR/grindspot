@@ -1,5 +1,3 @@
-"use client";
-
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
 import {
@@ -13,32 +11,32 @@ const faqs = [
   {
     question: "What is GrindSpot?",
     answer:
-      "GrindSpot helps remote workers and freelancers find great places to work from — cafes, co-working spaces, and libraries — all verified for wifi quality, noise level, and how work-friendly they actually are before you show up.",
+      "GrindSpot helps remote workers and freelancers find great places to work from: cafes, co-working spaces, restaurants and libraries, all verified for wifi quality, noise level, and how work-friendly they actually are before you show up.",
   },
   {
     question: "How do you verify a spot is actually good for working?",
     answer:
-      "Every spot on GrindSpot is rated on wifi speed, noise level, outlet availability, and overall work-friendliness, based on real visits and reviews, so you're not guessing whether a place is actually suited for a focused work session.",
+      "Every spot on GrindSpot is rated on noise level, wifi, outlet availability, and overall work-friendliness, based on real visits and reviews from other remote workers, so you're not guessing whether a place is actually suited for a focused work session.",
   },
   {
     question: "What do I get with a premium account?",
     answer:
-      "Premium unlocks full access to every verified spot on the map, detailed ratings and stats for each location, and the ability to save your favorite spots so you can find them again in one click.",
+      "Premium unlocks full access to every verified spot on site, detailed ratings and stats for each location, schedules for each spots, direct google maps link, filter options and the ability to save your favorite spots so you can find them again in one click.",
   },
   {
     question: "How much does GrindSpot cost?",
     answer:
-      "GrindSpot is a one-time payment that unlocks lifetime access to the platform — no recurring subscription, no hidden fees. You pay once and every spot, current and future, is unlocked for good.",
+      "GrindSpot is a one-time payment that unlocks lifetime access to the platform — no recurring subscription, no hidden fees. You pay once and every spot, current and future, is unlocked for good. the current price of GrindSpot is $350 MXN",
   },
   {
-    question: "Can I suggest a new work spot to add to the map?",
+    question: "Can I suggest a new work spot to add to the website?",
     answer:
-      "Yes! We're always looking to grow our list of verified spots. Reach out through our contact email with the spot's name and location, and our team will visit and verify it before adding it to the platform.",
+      "Yes! We're always looking to grow our list of verified spots. Reach out through our contact email with the spot's name and location, and we will review it before adding it to the platform.",
   },
   {
     question: "How do I manage or get a refund on my purchase?",
     answer:
-      "You can manage your billing details anytime from your account settings. If something isn't right with your purchase, contact our support team and we'll be happy to help sort it out.",
+      "If you're signed in and still within your first 7 days after purchase, you'll see a \"Request a Refund\" option in the footer — it opens your email app with a message already addressed to us so you can send your refund request in one click. After those 7 days, this option disappears and refunds are no longer available, since it falls outside our refund window. If the button doesn't open your email app for any reason, you can email us directly at leonelfr212@gmail.com — just make sure to send it from the same email you signed up with, mention that you're requesting a refund, and include the date you made your purchase. As long as you're within the 7-day policy, we'll process your refund without any issues.",
   },
 ];
 
