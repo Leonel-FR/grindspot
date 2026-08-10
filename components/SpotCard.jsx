@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import StatBar from "@/components/StatBar";
 import { isSpotOpenNow } from "@/lib/isOpenNow";
@@ -6,6 +6,14 @@ import { isSpotOpenNow } from "@/lib/isOpenNow";
 export default function SpotCard({ spot, onClick, liked, onToggleLike }) {
   const openNow = isSpotOpenNow(spot);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  // A cached image can finish before this even mounts, so onLoad alone
+  // would still flash the skeleton for one frame. Checking `complete`
+  // synchronously before paint skips that flash for already-cached images.
+  useLayoutEffect(() => {
+    if (imgRef.current?.complete) setImageLoaded(true);
+  }, []);
 
   return (
     <div
@@ -13,17 +21,18 @@ export default function SpotCard({ spot, onClick, liked, onToggleLike }) {
       className="group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white"
     >
       <div className="bg-secondary relative aspect-5/4.5">
+        {!imageLoaded && (
+          <div className="animate-shimmer absolute inset-0 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 bg-size-[200%_100%]" />
+        )}
+
         <Image
+          ref={imgRef}
           src={spot.image}
           alt={spot.name}
           fill
-          className={`object-cover transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          className="object-cover"
           onLoad={() => setImageLoaded(true)}
         />
-
-        {!imageLoaded && (
-          <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]" />
-        )}
 
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 px-4 opacity-100 transition-opacity duration-25 group-hover:opacity-0">
           <h3 className="font-display text-center text-2xl font-bold text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:text-3xl">

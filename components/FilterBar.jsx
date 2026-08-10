@@ -155,7 +155,7 @@ export default function FilterBar({
             className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
             onClick={onRequestAccess}
           >
-            Join GrindSpot.com
+            Join Grind-Spot.com
           </button>
         )}
       </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import EmailModal from "./EmailModal";
 import { signIn } from "next-auth/react";
 import { signOut } from "next-auth/react";
@@ -7,7 +7,17 @@ import { useSession } from "next-auth/react";
 
 export default function Hero({ hasAccess }) {
   const [modalOpened, setModalOpened] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef(null);
   const { data: session } = useSession();
+
+  // Same reasoning as SpotCard's image: don't gate the video's own
+  // visibility on this state (that would reintroduce a hydration-timed
+  // flash). The shimmer sits behind the video in the DOM and gets covered
+  // natively once a frame paints; this state only unmounts it afterwards.
+  useLayoutEffect(() => {
+    if (videoRef.current?.readyState >= 2) setVideoLoaded(true);
+  }, []);
 
   // Paying users have nothing to buy: the CTA is hidden, and the handler
   // refuses anyway so a stale render can't start a second checkout.
@@ -17,15 +27,24 @@ export default function Hero({ hasAccess }) {
   };
   return (
     <section className="relative overflow-hidden px-6 py-20 md:py-32">
+      {!videoLoaded && (
+        <div className="animate-shimmer absolute inset-0 h-full w-full bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 bg-size-[200%_100%]" />
+      )}
+
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        poster="/hero-poster.jpg"
+        poster="/hero-poster.webp"
+        onLoadedData={() => setVideoLoaded(true)}
         className="absolute inset-0 h-full w-full object-cover"
       >
-        <source src="/hero-video.mp4" type="video/mp4" />
+        <source
+          src="https://grindspot-pull-zone.b-cdn.net/hero-section/hero-section-video.mp4"
+          type="video/mp4"
+        />
       </video>
 
       <div className="absolute inset-0 bg-black/35" />
