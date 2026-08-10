@@ -1,0 +1,17 @@
+# GrindSpot
+
+> GrindSpot is a directory of remote-work-friendly locations (cafes, coworking spaces, restaurants, and libraries), verified for wifi quality, noise level, and overall work-friendliness before you go.
+
+GrindSpot helps remote workers and freelancers find a good place to work from. Each listed spot is rated on wifi, noise level, outlet availability, and general work-friendliness based on real visits and reviews. A one-time lifetime purchase unlocks full ratings, schedules, direct map links, and filtering across every verified spot.
+
+## Pages
+
+- [Home](https://grind-spot.com/): Browse and search verified remote work spots.
+- [FAQ](https://grind-spot.com/faq): Common questions about verification, premium access, pricing, and refunds.
+- [Privacy Policy](https://grind-spot.com/privacy)
+- [Terms of Service](https://grind-spot.com/terms)
+- [Cookie Policy](https://grind-spot.com/cookies)
+
+## Contact
+
+For spot suggestions or support: leonelfr212@gmail.com

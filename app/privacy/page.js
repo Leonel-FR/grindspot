@@ -1,8 +1,11 @@
 import LegalPage from "@/components/LegalPage";
 
 export const metadata = {
-  title: "Privacy Policy — GrindSpot",
+  title: "Privacy Policy",
   description: "How GrindSpot collects, uses, and protects your data.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 export default function PrivacyPage() {
@@ -13,7 +16,7 @@ export default function PrivacyPage() {
         “us,” or “our”), operated by <strong>Leonel Flores Ruiz</strong>{" "}
         (based in Guadalajara, Jalisco, Mexico), collects, uses, and
         discloses your personal information when you use our web
-        application located at <code>grindspot.app</code> (the “Service”).
+        application located at <code>grind-spot.com</code> (the “Service”).
       </p>
       <p>
         We are committed to complying with applicable data protection laws,

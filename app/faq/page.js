@@ -7,6 +7,15 @@ import {
   AccordionTrigger,
 } from "@/components/Accordion";
 
+export const metadata = {
+  title: "FAQ",
+  description:
+    "Answers to common questions about GrindSpot: how spots are verified, premium access, pricing, and refunds.",
+  alternates: {
+    canonical: "/faq",
+  },
+};
+
 const faqs = [
   {
     question: "What is GrindSpot?",
@@ -40,9 +49,26 @@ const faqs = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
+
 export default function FAQPage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <PageHeader />
 
       <section className="px-6 py-16 text-center md:py-24">

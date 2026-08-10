@@ -1,8 +1,11 @@
 import LegalPage from "@/components/LegalPage";
 
 export const metadata = {
-  title: "Terms of Service — GrindSpot",
+  title: "Terms of Service",
   description: "The terms that govern your use of GrindSpot.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {
@@ -13,7 +16,7 @@ export default function TermsPage() {
         operated by <strong>Leonel Flores Ruiz</strong>, an individual
         residing in Guadalajara, Jalisco, Mexico. These Terms of Service
         (“Terms”) govern your access to and use of our web application
-        located at <code>grindspot.app</code> (the “Service”).
+        located at <code>grind-spot.com</code> (the “Service”).
       </p>
       <p>
         By accessing or using GrindSpot, you agree to be bound by these

@@ -1,8 +1,11 @@
 import LegalPage from "@/components/LegalPage";
 
 export const metadata = {
-  title: "Cookie Policy — GrindSpot",
+  title: "Cookie Policy",
   description: "How GrindSpot uses cookies and similar technologies.",
+  alternates: {
+    canonical: "/cookies",
+  },
 };
 
 export default function CookiesPage() {
@@ -12,7 +15,7 @@ export default function CookiesPage() {
         This Cookie Policy explains how <strong>GrindSpot</strong> (“we,”
         “us,” or “our”) uses cookies and similar technologies (such as
         local storage) when you visit our web application at{" "}
-        <code>grindspot.app</code>.
+        <code>grind-spot.com</code>.
       </p>
 
       <hr />
