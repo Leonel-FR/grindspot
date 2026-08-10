@@ -42,7 +42,7 @@ export default function SpotModal({ spot, onClose }) {
             alt={spot.name}
             fill
             sizes="(min-width: 640px) 512px, 100vw"
-            quality={90}
+            quality={100}
             className="object-cover"
           />
         </div>
