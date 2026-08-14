@@ -80,7 +80,7 @@ export default function SpotCard({
             aria-hidden="true"
             fill={liked ? "#FF5A5F" : "none"}
             stroke="white"
-            strokeWidth="2"
+            strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             className="h-8 w-8 drop-shadow-[0_2px_2px_rgba(0,0,0,0.9)] transition-colors"
