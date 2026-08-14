@@ -26,6 +26,16 @@ export default function SpotModal({ spot, onClose }) {
     "sunday",
   ];
 
+  // The spot's own local day, not the visitor's — a cafe in Tokyo open until
+  // 22:00 should highlight Tokyo's "today", not whatever day it is for
+  // someone browsing from New York.
+  const currentDay = new Intl.DateTimeFormat("en-US", {
+    timeZone: spot.timezone,
+    weekday: "long",
+  })
+    .format(new Date())
+    .toLowerCase();
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 px-4 py-6"
@@ -85,10 +95,23 @@ export default function SpotModal({ spot, onClose }) {
           <ul className="pt-6 font-semibold">
             {Days.map((day) => {
               const schedules = spot.hours[day];
+              const isToday = day === currentDay;
               return (
-                <li key={day} className="flex justify-between">
-                  <span className="capitalize">{day}</span>
-                  <span>{formatHours(schedules)}</span>
+                <li
+                  key={day}
+                  className={`flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 ${
+                    isToday ? "bg-blue-50 text-blue-700" : ""
+                  }`}
+                >
+                  <span className="flex min-w-0 items-center gap-2 capitalize">
+                    <span className="truncate">{day}</span>
+                    {isToday && (
+                      <span className="shrink-0 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+                        Today
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0">{formatHours(schedules)}</span>
                 </li>
               );
             })}
