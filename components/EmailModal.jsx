@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 // Rendered only while open, so every open starts from a clean state instead of
-// inheriting the previous attempt's loading and error.
+// inheriting the previous attempt's loading state.
 export default function EmailModal({ onClose }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const submittingRef = useRef(false);
 
   // Redirecting to Stripe never unmounts this page, so coming back through the
@@ -34,7 +34,6 @@ export default function EmailModal({ onClose }) {
     const email = e.target.email.value;
 
     setLoading(true);
-    setError("");
     try {
       const res = await fetch("/api/billing/create-checkout", {
         method: "POST",
@@ -48,11 +47,12 @@ export default function EmailModal({ onClose }) {
         return;
       }
 
-      // Covers the "already paid" guard, which returns an error instead of a URL.
-      setError(data.error || "Something went wrong. Please try again.");
+      // Reached on rate-limiting or a genuine Stripe error — the "already
+      // has access" case above always returns a url, never lands here.
+      toast.error(data.error || "Something went wrong. Please try again.");
     } catch (err) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
 
     // Only reached when no redirect happened, so the user can correct the
@@ -126,11 +126,6 @@ export default function EmailModal({ onClose }) {
             )}
             {loading ? "Redirecting..." : "Continue to checkout"}
           </button>
-          {error && (
-            <p role="alert" className="text-sm font-medium text-[#FF5A5F]">
-              {error}
-            </p>
-          )}
         </form>
       </div>
     </div>

@@ -5,11 +5,13 @@ const isProd = process.env.NODE_ENV === "production";
 // injected styles. Checkout redirects to Stripe via a full-page navigation
 // (window.location.href), not stripe.js/an iframe, so no Stripe origins are
 // needed here — add them if Stripe Elements/embedded checkout are adopted.
+// 'unsafe-eval' is dev-only: React/Fast Refresh use eval() for dev-mode
+// debugging (stack traces, HMR) and never in a production build.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://grindspot-pull-zone.b-cdn.net",
+  "img-src 'self' data: https://grindspot-pull-zone.b-cdn.net https://lh3.googleusercontent.com",
   "media-src 'self' https://grindspot-pull-zone.b-cdn.net",
   "font-src 'self' data:",
   "connect-src 'self'",
@@ -45,6 +47,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "grindspot-pull-zone.b-cdn.net",
         pathname: "/spots/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },

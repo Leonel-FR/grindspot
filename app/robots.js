@@ -3,7 +3,7 @@ export default function robots() {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/auth/", "/success"],
+      disallow: ["/api/", "/auth/", "/success", "/welcome-back"],
     },
     sitemap: "https://grind-spot.com/sitemap.xml",
   };

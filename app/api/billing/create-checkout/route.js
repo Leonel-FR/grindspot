@@ -25,17 +25,16 @@ export async function POST(req) {
     }
 
     const { email } = await req.json();
+    const origin = headersList.get("origin");
 
     // Guard against paying twice: the UI hides the CTAs for users who already
     // have access, but a stale page or a direct call could still get here.
+    // Responds with the same 200 { url } shape as a real checkout instead of
+    // a distinct error, so the endpoint can't be used to enumerate which
+    // emails are paying customers — it just sends them somewhere else.
     if (await hasAccessByEmail(email)) {
-      return NextResponse.json(
-        { error: "You already have access to GrindSpot." },
-        { status: 409 }
-      );
+      return NextResponse.json({ url: `${origin}/welcome-back` });
     }
-
-    const origin = headersList.get("origin");
 
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({

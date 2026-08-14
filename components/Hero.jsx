@@ -1,15 +1,33 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import EmailModal from "./EmailModal";
-import { signIn } from "next-auth/react";
-import { signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function Hero({ hasAccess }) {
   const [modalOpened, setModalOpened] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const videoRef = useRef(null);
   const { data: session } = useSession();
+
+  // signIn/signOut both redirect through Google or NextAuth's own routes and
+  // back, so the "success" moment isn't reachable from the click handler's
+  // own scope — it's flagged via a callbackUrl query param and picked up
+  // here once the fresh page lands. The redirect is also load-bearing: it's
+  // a full navigation, so the server re-renders `hasAccess`/session-derived
+  // props from scratch instead of leaving them stale (a signed-out session
+  // with `hasAccess` still `true` from before would keep showing premium
+  // gates unlocked and make every gated fetch 401 until a manual reload).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authEvent = params.get("auth");
+    if (authEvent === "signed-in") toast.success("Signed in successfully!");
+    else if (authEvent === "signed-out")
+      toast.success("Signed out successfully!");
+    else return;
+    window.history.replaceState(null, "", window.location.pathname);
+  }, []);
 
   // Same reasoning as SpotCard's image: don't gate the video's own
   // visibility on this state (that would reintroduce a hydration-timed
@@ -51,15 +69,24 @@ export default function Hero({ hasAccess }) {
 
       {session ? (
         <button
-          className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
-          onClick={() => signOut()}
+          className="fixed top-4 right-4 z-10 flex cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
+          onClick={() => signOut({ callbackUrl: "/?auth=signed-out" })}
         >
+          {session.user?.image && (
+            <Image
+              src={session.user.image}
+              alt=""
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+          )}
           Sign Out
         </button>
       ) : (
         <button
           className="fixed top-4 right-4 z-10 cursor-pointer rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/?auth=signed-in" })}
         >
           Login
         </button>
