@@ -1,10 +1,15 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import StatBar from "@/components/StatBar";
-import { isSpotOpenNow } from "@/lib/isOpenNow";
 
-export default function SpotCard({ spot, onClick, liked, onToggleLike }) {
-  const openNow = isSpotOpenNow(spot);
+export default function SpotCard({
+  spot,
+  onClick,
+  liked,
+  onToggleLike,
+  loading,
+}) {
+  const openNow = spot.openNow;
   const [imageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef(null);
 
@@ -18,7 +23,10 @@ export default function SpotCard({ spot, onClick, liked, onToggleLike }) {
   return (
     <div
       onClick={onClick}
-      className="group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white"
+      aria-busy={loading}
+      className={`group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white ${
+        loading ? "pointer-events-none opacity-70" : ""
+      }`}
     >
       <div className="bg-secondary relative aspect-5/4.5">
         {!imageLoaded && (

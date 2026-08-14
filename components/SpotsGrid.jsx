@@ -1,17 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 import EmailModal from "@/components/EmailModal";
-import { isSpotOpenNow } from "@/lib/isOpenNow";
 import { spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
 
 export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [loadingSpotId, setLoadingSpotId] = useState(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
@@ -39,6 +40,24 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
       }
       action(...args);
     };
+
+  // Cards only carry teaser fields (no address/mapsUrl/hours), so opening the
+  // modal fetches the full detail from the access-gated route on demand.
+  async function openSpot(spot) {
+    if (loadingSpotId) return;
+    setLoadingSpotId(spot.id);
+
+    try {
+      const res = await fetch(`/api/spots/${spot.id}`);
+      if (!res.ok) throw new Error("Failed to load spot details");
+      setSelectedSpot(await res.json());
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoadingSpotId(null);
+    }
+  }
 
   async function toggleLike(spot) {
     const liked = likedIds.has(spot.id);
@@ -84,7 +103,7 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
     const query = search.trim().toLowerCase();
 
     return spots.filter((spot) => {
-      if (openNow && !isSpotOpenNow(spot)) return false;
+      if (openNow && !spot.openNow) return false;
       if (cities.length > 0 && !cities.includes(spot.city)) return false;
       if (prices.length > 0 && !spotMatchesPriceRanges(spot, prices))
         return false;
@@ -131,9 +150,10 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
             <SpotCard
               key={spot.id}
               spot={spot}
-              onClick={gate(() => setSelectedSpot(spot))}
+              onClick={gate(() => openSpot(spot))}
               liked={likedIds.has(spot.id)}
               onToggleLike={gate(() => toggleLike(spot))}
+              loading={loadingSpotId === spot.id}
             />
           ))}
         </div>
