@@ -2,9 +2,18 @@ import Image from "next/image";
 import StatBar from "@/components/StatBar";
 
 export default function SpotModal({ spot, onClose }) {
+  // Stored as 24h "HH:MM" strings (isOpenNow.js compares them directly), but
+  // shown as 12h with AM/PM.
+  function formatTime(time) {
+    const [hourStr, minute] = time.split(":");
+    const hour = Number(hourStr);
+    const period = hour >= 12 ? "PM" : "AM";
+    return `${hour % 12 || 12}:${minute} ${period}`;
+  }
+
   function formatHours(hours) {
     if (!hours || hours.closed) return "❌ Closed";
-    return `${hours.open} - ${hours.close}`;
+    return `${formatTime(hours.open)} - ${formatTime(hours.close)}`;
   }
 
   const Days = [
