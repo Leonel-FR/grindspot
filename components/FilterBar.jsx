@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { InlineAuthButton } from "@/components/AuthButton";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import { PRICE_RANGES } from "@/lib/priceRanges";
@@ -66,6 +68,12 @@ export default function FilterBar({
   hasAccess,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { data: session } = useSession();
+  // Mirrors Hero's own visibility check: when both are true, Hero renders
+  // `null` and this becomes the first thing on the page, so it needs extra
+  // top breathing room on mobile (desktop already has its own top padding
+  // via the row below).
+  const heroHidden = Boolean(session) && hasAccess;
 
   const sections = [
     {
@@ -103,7 +111,7 @@ export default function FilterBar({
     totalSelected > 0 || openNow || search.trim().length > 0;
 
   return (
-    <div className="pb-5">
+    <div className={`pb-5 ${heroHidden ? "pt-3 sm:pt-0" : ""}`}>
       {/* Mobile: Filters button + search bar */}
       <div className="flex items-center gap-3 sm:hidden">
         <button
@@ -126,12 +134,13 @@ export default function FilterBar({
           className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         />
       </div>
-      <div className="mt-3 flex sm:hidden">
+      <div className="mt-3 flex items-center justify-between gap-3 sm:hidden">
         <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
+        <InlineAuthButton />
       </div>
 
       {/* Desktop: search bar + dropdowns */}
-      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3 sm:pt-6">
         <input
           type="text"
           value={search}

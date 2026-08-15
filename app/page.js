@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import AuthButton from "@/components/AuthButton";
 import SpotsGrid from "@/components/SpotsGrid";
 import Footer from "@/components/Footer";
 import { getSpots } from "@/lib/spots";
@@ -18,6 +19,7 @@ export default async function Home() {
 
   return (
     <main>
+      <AuthButton />
       <Hero hasAccess={Boolean(user)} />
       <SpotsGrid
         spots={spots}
