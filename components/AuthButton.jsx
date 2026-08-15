@@ -31,12 +31,16 @@ function AuthButtonContent({ session, className }) {
   );
 }
 
-// Mobile has nowhere fixed-positioned to put this without covering other
-// content (FilterBar's own top padding is sized around this button being
-// absent there), so on small screens it renders in-flow instead — see
-// InlineAuthButton, placed in FilterBar's empty "Open now" row space.
-export default function AuthButton() {
+// Mirrors Hero's own visibility check: whenever Hero is showing (anyone
+// without a session, or signed in without access), this renders fixed
+// top-right on every screen size, same spot the button lived in before it
+// was pulled out of Hero. Once Hero hides itself (signed in + access),
+// mobile has nowhere fixed-positioned to put this without covering other
+// content, so it's hidden here in favor of InlineAuthButton rendered inline
+// in FilterBar instead.
+export default function AuthButton({ hasAccess }) {
   const { data: session } = useSession();
+  const heroHidden = Boolean(session) && hasAccess;
 
   // signIn/signOut both redirect through Google or NextAuth's own routes and
   // back, so the "success" moment isn't reachable from the click handler's
@@ -59,12 +63,16 @@ export default function AuthButton() {
   return (
     <AuthButtonContent
       session={session}
-      className="fixed top-4 right-4 z-10 hidden cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white sm:flex md:top-6 md:right-6 md:px-5 md:py-2 md:text-base"
+      className={`fixed top-4 right-4 z-10 cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base ${
+        heroHidden ? "hidden sm:flex" : "flex"
+      }`}
     />
   );
 }
 
-// Renders in-flow (not fixed) for the mobile FilterBar layout.
+// Renders in-flow (not fixed) for the mobile FilterBar layout. Only meant
+// to be mounted by the caller when heroHidden is true — see AuthButton's
+// comment above for why mobile needs a non-fixed fallback in that case.
 export function InlineAuthButton() {
   const { data: session } = useSession();
 

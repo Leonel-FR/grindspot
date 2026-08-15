@@ -13,8 +13,20 @@ export default function Hero({ hasAccess }) {
   // visibility on this state (that would reintroduce a hydration-timed
   // flash). The shimmer sits behind the video in the DOM and gets covered
   // natively once a frame paints; this state only unmounts it afterwards.
+  //
+  // The explicit mute + play() retry below works around a React SSR gap:
+  // React never writes `muted` into the server-rendered HTML (it only sets
+  // it as a DOM property, not an attribute), so the video briefly exists as
+  // an unmuted autoplaying element until hydration runs. Mobile browsers
+  // check muted state at the moment they'd start autoplay and, if hydration
+  // hasn't caught up yet, permanently block that attempt — later setting
+  // `.muted` doesn't undo the block, only an explicit `.play()` retry does.
   useLayoutEffect(() => {
-    if (videoRef.current?.readyState >= 2) setVideoLoaded(true);
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    if (video.readyState >= 2) setVideoLoaded(true);
+    video.play().catch(() => {});
   }, []);
 
   // Paying users have nothing to buy: the CTA is hidden, and the handler

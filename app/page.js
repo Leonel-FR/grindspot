@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <main>
-      <AuthButton />
+      <AuthButton hasAccess={Boolean(user)} />
       <Hero hasAccess={Boolean(user)} />
       <SpotsGrid
         spots={spots}
