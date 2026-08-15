@@ -53,9 +53,13 @@ export default function Hero({ hasAccess }) {
   return (
     <section className="relative overflow-hidden px-6 py-20 md:py-32">
       {!videoLoaded && (
-        <div className="animate-shimmer absolute inset-0 h-full w-full bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 bg-size-[200%_100%]" />
+        <div className="animate-shimmer absolute inset-0 hidden h-full w-full bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 bg-size-[200%_100%] sm:block" />
       )}
 
+      {/* Below sm (mobile), the `source[media]` query never matches, so the
+          browser never fetches the video and the `poster` image just sits
+          there as a plain static background — no autoplay to fight with and
+          no video bytes spent on what's often a cellular connection. */}
       <video
         ref={videoRef}
         autoPlay
@@ -69,6 +73,7 @@ export default function Hero({ hasAccess }) {
         <source
           src="https://grindspot-pull-zone.b-cdn.net/hero-section/hero-section-video.mp4"
           type="video/mp4"
+          media="(min-width: 640px)"
         />
       </video>
 
