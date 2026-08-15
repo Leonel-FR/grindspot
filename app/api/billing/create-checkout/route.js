@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { stripe } from "@/lib/stripe";
 import { hasAccessByEmail } from "@/lib/access";
@@ -36,6 +36,18 @@ export async function POST(req) {
       return NextResponse.json({ url: `${origin}/welcome-back` });
     }
 
+    // DataFast attributes this payment back to a marketing channel by
+    // matching these against the visitor/session it tracked client-side.
+    // Cookies are absent if the datafa.st script hasn't run yet (blocked,
+    // or a direct API call), so metadata is only set when present.
+    const cookieStore = await cookies();
+    const visitorId = cookieStore.get("datafast_visitor_id")?.value;
+    const sessionId = cookieStore.get("datafast_session_id")?.value;
+    const metadata = {
+      ...(visitorId && { datafast_visitor_id: visitorId }),
+      ...(sessionId && { datafast_session_id: sessionId }),
+    };
+
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -48,6 +60,7 @@ export async function POST(req) {
       mode: "payment",
       customer_email: email,
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      metadata,
       // Provide a name (for example, hosted_web_0001) to label this Checkout integration and measure its conversion independently
     });
     return NextResponse.json({ url: session.url });

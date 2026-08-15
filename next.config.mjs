@@ -9,12 +9,12 @@ const isProd = process.env.NODE_ENV === "production";
 // debugging (stack traces, HMR) and never in a production build.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://datafa.st${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://grindspot-pull-zone.b-cdn.net https://lh3.googleusercontent.com",
   "media-src 'self' https://grindspot-pull-zone.b-cdn.net",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://datafa.st",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
