@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import EmailModal from "./EmailModal";
 import { useSession } from "next-auth/react";
 
@@ -13,20 +13,33 @@ export default function Hero({ hasAccess }) {
   // visibility on this state (that would reintroduce a hydration-timed
   // flash). The shimmer sits behind the video in the DOM and gets covered
   // natively once a frame paints; this state only unmounts it afterwards.
-  //
-  // The explicit mute + play() retry below works around a React SSR gap:
-  // React never writes `muted` into the server-rendered HTML (it only sets
-  // it as a DOM property, not an attribute), so the video briefly exists as
-  // an unmuted autoplaying element until hydration runs. Mobile browsers
-  // check muted state at the moment they'd start autoplay and, if hydration
-  // hasn't caught up yet, permanently block that attempt — later setting
-  // `.muted` doesn't undo the block, only an explicit `.play()` retry does.
   useLayoutEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    video.muted = true;
     if (video.readyState >= 2) setVideoLoaded(true);
     video.play().catch(() => {});
+  }, []);
+
+  // Some mobile browsers refuse autoplay outright no matter what the markup
+  // says — iOS Safari's "Auto-Play Video Previews" setting defaults to
+  // Wi-Fi only, and Android's Data Saver mode does the same over cellular.
+  // Both still allow playback triggered by a real user gesture, so the
+  // page's very first tap/scroll retries it once as a fallback.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const retryPlay = () => {
+      if (video.paused) video.play().catch(() => {});
+    };
+    document.addEventListener("pointerdown", retryPlay, { once: true });
+    document.addEventListener("scroll", retryPlay, {
+      once: true,
+      passive: true,
+    });
+    return () => {
+      document.removeEventListener("pointerdown", retryPlay);
+      document.removeEventListener("scroll", retryPlay);
+    };
   }, []);
 
   // Paying users have nothing to buy: the CTA is hidden, and the handler
