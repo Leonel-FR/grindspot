@@ -3,7 +3,10 @@ import Google from "next-auth/providers/google";
 import sql from "@/lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
+  // Auth.js only sends PKCE by default — Google (and OAuth best practice)
+  // also wants the `state` param as CSRF protection on the redirect, so it's
+  // added explicitly rather than relying on the default.
+  providers: [Google({ checks: ["pkce", "state"] })],
   pages: {
     error: "/auth/error",
   },
