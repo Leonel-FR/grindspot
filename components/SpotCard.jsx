@@ -89,8 +89,11 @@ export default function SpotCard({
           </svg>
         </button>
 
-        <span className="absolute right-2 bottom-2 rounded px-2 py-1 text-lg font-bold text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">
-          {spot.priceRange}
+        <span className="absolute right-2 bottom-2 flex items-baseline gap-1 rounded px-2 py-1 text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">
+          <span className="text-base font-bold sm:text-lg">
+            {spot.priceRange}
+          </span>
+          <span className="text-[10px] font-semibold sm:text-xs">MXN</span>
         </span>
 
         <span className="absolute bottom-2 left-2 rounded px-2 py-1 text-lg font-bold text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">

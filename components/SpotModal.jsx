@@ -71,8 +71,9 @@ export default function SpotModal({ spot, onClose }) {
             {spot.name}
           </h2>
           <p className="text-muted mt-1 text-sm">{spot.address}</p>
-          <p className="text-accent mt-1 text-sm font-semibold">
-            {spot.priceRange}
+          <p className="text-accent mt-1 flex items-baseline gap-1 text-sm font-semibold">
+            <span>{spot.priceRange}</span>
+            <span className="text-xs font-medium text-gray-500">MXN</span>
           </p>
 
           <div className="mt-6 flex flex-col gap-4">
