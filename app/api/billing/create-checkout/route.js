@@ -18,10 +18,7 @@ export async function POST(req) {
 
     const { success } = await checkoutRatelimit.limit(ip);
     if (!success) {
-      return NextResponse.json(
-        { error: "Too many attempts. Please try again in a minute." },
-        { status: 429 }
-      );
+      return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
 
     const { email } = await req.json();
@@ -65,8 +62,12 @@ export async function POST(req) {
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    // err.message may come straight from Stripe (English only, and not meant
+    // for end users) — logged here for debugging, but the client only ever
+    // sees a translated generic error, never this raw text.
+    console.error(err);
     return NextResponse.json(
-      { error: err.message },
+      { error: "checkout_failed" },
       { status: err.statusCode || 500 }
     );
   }

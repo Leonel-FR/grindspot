@@ -51,7 +51,13 @@ export default function EmailModal({ onClose }) {
 
       // Reached on rate-limiting or a genuine Stripe error — the "already
       // has access" case above always returns a url, never lands here.
-      toast.error(data.error || t("emailModal.genericError"));
+      // The server sends an error *code*, never user-facing text, so the
+      // message shown always matches the selected language.
+      toast.error(
+        data.error === "rate_limited"
+          ? t("emailModal.rateLimited")
+          : t("emailModal.genericError")
+      );
     } catch (err) {
       console.error(err);
       toast.error(t("emailModal.genericError"));

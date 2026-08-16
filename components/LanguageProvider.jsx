@@ -1,6 +1,11 @@
 "use client";
 
-import { createContext, useContext, useEffect, useSyncExternalStore } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import en from "@/lib/i18n/dictionaries/en";
 import es from "@/lib/i18n/dictionaries/es";
 
@@ -70,6 +75,22 @@ export function LanguageProvider({ children }) {
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
+  );
+}
+
+// For one-shot translations needed the instant a component mounts (e.g. a
+// toast fired from a mount effect), not for regular rendering. `t` from
+// useLanguage() lags one frame on first paint — language starts at the
+// server snapshot ("en") and only flips to the real stored value after
+// hydration settles (see getServerSnapshot above) — so a toast fired in a
+// mount effect using that `t` can catch the wrong language. This reads
+// localStorage directly, which has no such lag.
+export function translateNow(path) {
+  const language = getSnapshot();
+  return (
+    getNested(dictionaries[language], path) ??
+    getNested(dictionaries.en, path) ??
+    path
   );
 }
 

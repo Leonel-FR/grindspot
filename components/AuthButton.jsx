@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { useLanguage } from "@/components/LanguageProvider";
+import { translateNow, useLanguage } from "@/components/LanguageProvider";
 
 // Sized in `em` so it tracks the button's font size at any breakpoint.
 function Spinner() {
@@ -112,7 +112,6 @@ function AuthButtonContent({ session, className }) {
 // desktop row) instead.
 export default function AuthButton({ hasAccess }) {
   const { data: session } = useSession();
-  const { t } = useLanguage();
   const heroHidden = Boolean(session) && hasAccess;
 
   // signIn/signOut both redirect through Google or NextAuth's own routes and
@@ -123,14 +122,22 @@ export default function AuthButton({ hasAccess }) {
   // props from scratch instead of leaving them stale (a signed-out session
   // with `hasAccess` still `true` from before would keep showing premium
   // gates unlocked and make every gated fetch 401 until a manual reload).
+  //
+  // Uses translateNow (not useLanguage's `t`) because this fires from a
+  // mount effect: `t` is still bound to the SSR-matching "en" snapshot on
+  // that very first pass and only flips to the real stored language a frame
+  // later, but the query param below is stripped right after this runs —
+  // so a stale-English toast here never gets a second, correctly-timed
+  // chance to fire.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const authEvent = params.get("auth");
-    if (authEvent === "signed-in") toast.success(t("auth.signedIn"));
-    else if (authEvent === "signed-out") toast.success(t("auth.signedOut"));
+    if (authEvent === "signed-in") toast.success(translateNow("auth.signedIn"));
+    else if (authEvent === "signed-out")
+      toast.success(translateNow("auth.signedOut"));
     else return;
     window.history.replaceState(null, "", window.location.pathname);
-  }, [t]);
+  }, []);
 
   return (
     <AuthButtonContent
