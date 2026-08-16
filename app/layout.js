@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 const SITE_URL = "https://grind-spot.com";
 const SITE_NAME = "GrindSpot";
 const SITE_DESCRIPTION =
-  "Find remote work spots verified for wifi, noise level, and work-friendliness before you go. Discover the best cafes, coworking spaces, and libraries near you.";
+  "Find remote work spots verified for wifi, noise level, and work-friendliness before you go. Discover the best coffee shops, restaurants, coworking spaces, and libraries near you.";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -35,6 +35,13 @@ export const metadata = {
     "work friendly cafes",
     "digital nomad spots",
     "wifi cafes near me",
+    "lugares para trabajar remoto",
+    "cafeterías para trabajar remoto",
+    "lugares de trabajo remoto",
+    "cafés con wifi",
+    "cafés para hacer home office",
+    "Lugares para hacer home office",
+    "Lugares para trabajar con laptop",
   ],
   applicationName: SITE_NAME,
   alternates: {
