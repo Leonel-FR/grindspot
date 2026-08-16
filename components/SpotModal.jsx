@@ -79,7 +79,7 @@ export default function SpotModal({ spot, onClose }) {
             <span className="text-xs font-medium text-gray-500">MXN</span>
           </p>
 
-          <div className="mt-6 flex flex-col gap-4">
+          <div className="mt-6 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-4">
             <StatBar
               label={t("stats.rating")}
               value={(spot.rating / 5) * 100}

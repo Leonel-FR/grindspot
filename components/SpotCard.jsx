@@ -55,7 +55,7 @@ export default function SpotCard({
           </h3>
         </div>
 
-        <div className="absolute inset-0 flex flex-col justify-center gap-4 bg-black/70 px-6 opacity-0 transition-opacity duration-50 group-hover:opacity-100">
+        <div className="absolute inset-0 grid grid-cols-[auto_1fr] content-center items-center gap-x-3 gap-y-4 bg-black/70 px-6 opacity-0 transition-opacity duration-50 group-hover:opacity-100">
           <StatBar
             label={t("stats.rating")}
             value={(spot.rating / 5) * 100}
