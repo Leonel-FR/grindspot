@@ -12,7 +12,7 @@ export default function StatBar({
   animateOnMount = false,
 }) {
   const fillClass = animateOnHover
-    ? "w-0 transition-[width] duration-225 ease-out group-hover:w-(--fill)"
+    ? "w-0 transition-[width] duration-225 ease-out group-hover:w-(--fill) group-data-[revealed=true]:w-(--fill)"
     : animateOnMount
       ? "w-(--fill) animate-fill-up"
       : "w-(--fill) transition-[width] duration-225 ease-out";
