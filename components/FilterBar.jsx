@@ -176,7 +176,7 @@ export default function FilterBar({
           // pinned to the row's right edge when it fits, but still wraps
           // onto — and re-pins to the right of — its own line instead of
           // overflowing when the filters above it already fill the row.
-          <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md" />
+          <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md disabled:cursor-not-allowed disabled:opacity-70" />
         )}
       </div>
 

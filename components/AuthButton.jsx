@@ -1,35 +1,103 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/components/LanguageProvider";
 
+// Sized in `em` so it tracks the button's font size at any breakpoint.
+function Spinner() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      className="h-[1em] w-[1em] shrink-0 animate-spin"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+        opacity="0.3"
+      />
+      <path
+        d="M12 2a10 10 0 0 1 10 10"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function AuthButtonContent({ session, className }) {
   const { t } = useLanguage();
+  const [loading, setLoading] = useState(false);
+  // `loading` only blocks the button after a re-render; this blocks the
+  // second click of a fast double-click within the same tick.
+  const pendingRef = useRef(false);
 
-  return session ? (
+  // signIn/signOut both redirect through Google or NextAuth's own routes and
+  // never resolve on this page when that redirect succeeds, so bfcache
+  // restoring this page via back/forward would otherwise leave the button
+  // frozen mid-spin (same issue EmailModal has with its Stripe redirect).
+  useEffect(() => {
+    const handlePageShow = (e) => {
+      if (!e.persisted) return;
+      pendingRef.current = false;
+      setLoading(false);
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
+  async function handleClick() {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
+    setLoading(true);
+
+    try {
+      if (session) {
+        await signOut({ callbackUrl: "/?auth=signed-out" });
+      } else {
+        await signIn("google", { callbackUrl: "/?auth=signed-in" });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(t("auth.genericError"));
+      pendingRef.current = false;
+      setLoading(false);
+    }
+  }
+
+  return (
     <button
       className={className}
-      onClick={() => signOut({ callbackUrl: "/?auth=signed-out" })}
+      onClick={handleClick}
+      disabled={loading}
+      aria-busy={loading}
     >
-      {session.user?.image && (
-        <Image
-          src={session.user.image}
-          alt=""
-          width={20}
-          height={20}
-          className="rounded-full"
-        />
+      {loading ? (
+        <Spinner />
+      ) : (
+        session?.user?.image && (
+          <Image
+            src={session.user.image}
+            alt=""
+            width={20}
+            height={20}
+            className="rounded-full"
+          />
+        )
       )}
-      {t("auth.signOut")}
-    </button>
-  ) : (
-    <button
-      className={className}
-      onClick={() => signIn("google", { callbackUrl: "/?auth=signed-in" })}
-    >
-      {t("auth.login")}
+      {loading
+        ? t("auth.redirecting")
+        : session
+          ? t("auth.signOut")
+          : t("auth.login")}
     </button>
   );
 }
@@ -67,7 +135,7 @@ export default function AuthButton({ hasAccess }) {
   return (
     <AuthButtonContent
       session={session}
-      className={`fixed top-4 right-4 z-10 cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base ${
+      className={`fixed top-4 right-4 z-10 cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70 md:top-6 md:right-6 md:px-5 md:py-2 md:text-base ${
         heroHidden ? "hidden" : "flex"
       }`}
     />
@@ -87,7 +155,7 @@ export function InlineAuthButton({ className }) {
       session={session}
       className={
         className ??
-        "flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 text-sm font-bold text-white sm:hidden"
+        "flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70 sm:hidden"
       }
     />
   );
