@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useLanguage } from "@/components/LanguageProvider";
 
-const REFUND_EMAIL = "leonelfr212@gmail.com";
+const CONTACT_EMAIL = "leonelfr212@gmail.com";
+
 const REFUND_SUBJECT = "Solicitud de reembolso - GrindSpot";
 const REFUND_BODY = `Hola,
 
@@ -13,14 +15,31 @@ Email con el que pagué:
 Fecha de compra:
 Motivo (opcional):`;
 
-const REFUND_MAILTO_HREF = `mailto:${REFUND_EMAIL}?subject=${encodeURIComponent(REFUND_SUBJECT)}&body=${encodeURIComponent(REFUND_BODY)}`;
+const REFUND_MAILTO_HREF = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(REFUND_SUBJECT)}&body=${encodeURIComponent(REFUND_BODY)}`;
+
+const SUGGEST_SUBJECT = "Sugerencia de nuevo spot - GrindSpot";
+
+// The account email is pre-filled (instead of a blank field like the
+// refund template) since we already have it client-side via the session,
+// and it's how we match the suggestion back to who sent it.
+function buildSuggestMailtoHref(email) {
+  const body = `Hola,
+
+Quisiera sugerir un nuevo lugar para GrindSpot.
+
+Mi correo de GrindSpot: ${email ?? ""}
+Link de Google Maps del lugar: `;
+
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(SUGGEST_SUBJECT)}&body=${encodeURIComponent(body)}`;
+}
 
 // Split out of Footer (an async Server Component fetching `showRefundLink`
-// from the DB) because the language preference only lives in client state —
-// same reasoning as AuthButton/InlineAuthButton needing a client boundary
-// for useSession.
-export default function FooterContent({ showRefundLink }) {
+// and `hasAccess` from the DB) because the language preference and the
+// signed-in email only live in client state — same reasoning as
+// AuthButton/InlineAuthButton needing a client boundary for useSession.
+export default function FooterContent({ showRefundLink, hasAccess }) {
   const { t } = useLanguage();
+  const { data: session } = useSession();
 
   return (
     <footer className="bg-white py-10">
@@ -48,6 +67,14 @@ export default function FooterContent({ showRefundLink }) {
             <Link href="/cookies" className="hover:text-[#FF5A5F]">
               {t("footer.cookies")}
             </Link>
+            {hasAccess && (
+              <a
+                href={buildSuggestMailtoHref(session?.user?.email)}
+                className="hover:text-[#FF5A5F]"
+              >
+                {t("footer.suggestSpot")}
+              </a>
+            )}
             {showRefundLink && (
               <a href={REFUND_MAILTO_HREF} className="hover:text-[#FF5A5F]">
                 {t("footer.refund")}

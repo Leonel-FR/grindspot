@@ -1,22 +1,24 @@
 "use client";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Success() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   return (
     <main className="flex min-h-full flex-col items-center justify-center gap-4 px-6 py-20 md:py-32">
-      <h1 className="text-center text-3xl font-bold">Payment Successful! 🥳</h1>
+      <h1 className="text-center text-3xl font-bold">{t("success.title")}</h1>
       <p className="max-w-lg text-center text-lg text-gray-600">
         {session
-          ? "You're signed in — head to the home page to find your next spot."
-          : "Thank you so much for joining GrindSpot! Sign in to get started."}
+          ? t("success.messageSignedIn")
+          : t("success.messageSignedOut")}
       </p>
       {session ? (
         <Link href="/">
           <button className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white">
-            Home Page
+            {t("success.homeButton")}
           </button>
         </Link>
       ) : (
@@ -27,7 +29,7 @@ export default function Success() {
           onClick={() => signIn("google", { callbackUrl: "/?auth=signed-in" })}
           className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
         >
-          Sign in with Google
+          {t("auth.signInWithGoogle")}
         </button>
       )}
     </main>
