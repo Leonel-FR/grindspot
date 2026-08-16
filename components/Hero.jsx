@@ -2,12 +2,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import EmailModal from "./EmailModal";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Hero({ hasAccess }) {
   const [modalOpened, setModalOpened] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const videoRef = useRef(null);
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   // Same reasoning as SpotCard's image: don't gate the video's own
   // visibility on this state (that would reintroduce a hydration-timed
@@ -81,19 +83,18 @@ export default function Hero({ hasAccess }) {
 
       <div className="relative z-10 flex flex-col items-center space-y-5 text-center md:space-y-6">
         <h1 className="max-w-4xl text-4xl leading-none font-black tracking-[-0.4px] text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:max-w-6xl md:text-6xl">
-          Find your next remote work spot,
-          <br className="hidden md:block" /> verified before you go
+          {t("hero.titleLine1")}
+          <br className="hidden md:block" /> {t("hero.titleLine2")}
         </h1>
         <p className="max-w-lg text-base leading-relaxed font-normal text-white/80 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)]">
-          Your next great work session is closer than you think. Explore the
-          best spots in the city, all in one place.
+          {t("hero.subtitle")}
         </p>
         {!hasAccess && (
           <button
             className="cursor-pointer rounded-lg bg-[#FF5A5F] px-6 py-3 font-bold text-white"
             onClick={openCheckout}
           >
-            Get Started
+            {t("hero.cta")}
           </button>
         )}
       </div>

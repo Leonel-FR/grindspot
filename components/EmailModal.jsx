@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/components/LanguageProvider";
 
 // Rendered only while open, so every open starts from a clean state instead of
 // inheriting the previous attempt's loading state.
 export default function EmailModal({ onClose }) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const submittingRef = useRef(false);
 
@@ -49,10 +51,10 @@ export default function EmailModal({ onClose }) {
 
       // Reached on rate-limiting or a genuine Stripe error — the "already
       // has access" case above always returns a url, never lands here.
-      toast.error(data.error || "Something went wrong. Please try again.");
+      toast.error(data.error || t("emailModal.genericError"));
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("emailModal.genericError"));
     }
 
     // Only reached when no redirect happened, so the user can correct the
@@ -81,10 +83,10 @@ export default function EmailModal({ onClose }) {
         </button>
 
         <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
-          Get started now
+          {t("emailModal.title")}
         </h2>
         <p className="mt-2 text-sm text-gray-500">
-          Join GrindSpot and find your next favorite work spot.
+          {t("emailModal.subtitle")}
         </p>
 
         <form className="mt-6 flex flex-col gap-3" onSubmit={handleSubmit}>
@@ -92,7 +94,7 @@ export default function EmailModal({ onClose }) {
             type="email"
             name="email"
             required
-            placeholder="Enter your email"
+            placeholder={t("emailModal.emailPlaceholder")}
             className="text-mc text-md w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           />
           <button
@@ -124,7 +126,7 @@ export default function EmailModal({ onClose }) {
                 />
               </svg>
             )}
-            {loading ? "Redirecting..." : "Continue to checkout"}
+            {loading ? t("emailModal.redirecting") : t("emailModal.continue")}
           </button>
         </form>
       </div>

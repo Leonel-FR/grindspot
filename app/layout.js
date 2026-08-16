@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
+import { LanguageProvider } from "@/components/LanguageProvider";
+import LanguageToggle from "@/components/LanguageToggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -86,22 +88,25 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <SessionProvider>
-        <body className="flex min-h-full flex-col">
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
-          <Toaster position="top-center" />
-          <Script
-            src="https://datafa.st/js/script.js"
-            data-website-id="dfid_Db0mcaFtGlQOhXaes5qBT"
-            data-domain="grind-spot.com"
-            strategy="afterInteractive"
-          />
-          {children}
-        </body>
-      </SessionProvider>
+      <LanguageProvider>
+        <SessionProvider>
+          <body className="flex min-h-full flex-col">
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <Toaster position="top-center" />
+            <LanguageToggle className="fixed bottom-4 left-4 z-20 flex shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-black shadow-md backdrop-blur-sm transition-colors hover:bg-white" />
+            <Script
+              src="https://datafa.st/js/script.js"
+              data-website-id="dfid_Db0mcaFtGlQOhXaes5qBT"
+              data-domain="grind-spot.com"
+              strategy="afterInteractive"
+            />
+            {children}
+          </body>
+        </SessionProvider>
+      </LanguageProvider>
     </html>
   );
 }

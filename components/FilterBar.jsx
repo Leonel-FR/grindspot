@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { InlineAuthButton } from "@/components/AuthButton";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import { useLanguage } from "@/components/LanguageProvider";
 import { PRICE_RANGES } from "@/lib/priceRanges";
 import { RATING_CATEGORIES } from "@/lib/ratingCategory";
 
@@ -12,6 +13,8 @@ const PRICE_OPTIONS = PRICE_RANGES.map((range) => range.label);
 const RATING_OPTIONS = RATING_CATEGORIES.map((entry) => entry.label);
 
 function OpenNowToggle({ checked, onChange, className = "" }) {
+  const { t } = useLanguage();
+
   return (
     <button
       type="button"
@@ -43,7 +46,7 @@ function OpenNowToggle({ checked, onChange, className = "" }) {
           </svg>
         )}
       </span>
-      Open now
+      {t("filterBar.openNow")}
     </button>
   );
 }
@@ -69,6 +72,7 @@ export default function FilterBar({
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { data: session } = useSession();
+  const { t } = useLanguage();
   // Mirrors Hero's own visibility check: when both are true, Hero renders
   // `null` and this becomes the first thing on the page, so it needs extra
   // top breathing room on mobile (desktop already has its own top padding
@@ -77,19 +81,19 @@ export default function FilterBar({
 
   const sections = [
     {
-      title: "City",
+      title: t("filterBar.city"),
       options: cityOptions,
       selected: cities,
       onChange: onCitiesChange,
     },
     {
-      title: "Price",
+      title: t("filterBar.price"),
       options: PRICE_OPTIONS,
       selected: prices,
       onChange: onPricesChange,
     },
     {
-      title: "Place type",
+      title: t("filterBar.placeType"),
       options: placeTypeOptions,
       selected: placeTypes,
       onChange: onPlaceTypesChange,
@@ -119,7 +123,7 @@ export default function FilterBar({
           onClick={() => setSheetOpen(true)}
           className="flex shrink-0 items-center gap-1.5 rounded-3xl border-2 border-[#FF5A5F] bg-white px-4 py-2 font-bold text-[#FF5A5F] shadow-md focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         >
-          Filters
+          {t("filterBar.filtersButton")}
           {totalSelected > 0 && (
             <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF5A5F] px-1.5 text-xs font-bold text-white">
               {totalSelected}
@@ -130,7 +134,7 @@ export default function FilterBar({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search for name"
+          placeholder={t("filterBar.searchPlaceholder")}
           className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         />
       </div>
@@ -140,37 +144,39 @@ export default function FilterBar({
       </div>
 
       {/* Desktop: search bar + dropdowns */}
-      <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search for name"
-            className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder={t("filterBar.searchPlaceholder")}
+          className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+        />
+        {sections.map((section) => (
+          <MultiSelectDropdown
+            key={section.title}
+            label={section.title}
+            options={section.options}
+            selected={section.selected}
+            onChange={section.onChange}
           />
-          {sections.map((section) => (
-            <MultiSelectDropdown
-              key={section.title}
-              label={section.title}
-              options={section.options}
-              selected={section.selected}
-              onChange={section.onChange}
-            />
-          ))}
-          <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
+        ))}
+        <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
 
-          {!hasAccess && (
-            <button
-              className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
-              onClick={onRequestAccess}
-            >
-              Join Grind-Spot.com
-            </button>
-          )}
-        </div>
+        {!hasAccess && (
+          <button
+            className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
+            onClick={onRequestAccess}
+          >
+            {t("filterBar.join")}
+          </button>
+        )}
         {heroHidden && (
-          <InlineAuthButton className="flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md" />
+          // ml-auto (not the parent's justify-between) so this stays
+          // pinned to the row's right edge when it fits, but still wraps
+          // onto — and re-pins to the right of — its own line instead of
+          // overflowing when the filters above it already fill the row.
+          <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md" />
         )}
       </div>
 

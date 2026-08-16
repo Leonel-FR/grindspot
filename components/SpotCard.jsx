@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import StatBar from "@/components/StatBar";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function SpotCard({
   spot,
@@ -9,6 +10,7 @@ export default function SpotCard({
   onToggleLike,
   loading,
 }) {
+  const { t } = useLanguage();
   const openNow = spot.openNow;
   const [imageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef(null);
@@ -55,13 +57,25 @@ export default function SpotCard({
 
         <div className="absolute inset-0 flex flex-col justify-center gap-4 bg-black/70 px-6 opacity-0 transition-opacity duration-50 group-hover:opacity-100">
           <StatBar
-            label="⭐️ Rating"
+            label={t("stats.rating")}
             value={(spot.rating / 5) * 100}
             animateOnHover
           />
-          <StatBar label="💻 Work" value={spot.workFriendly} animateOnHover />
-          <StatBar label="🤫 Quiet" value={spot.quiet} animateOnHover />
-          <StatBar label="💰 Value" value={spot.value} animateOnHover />
+          <StatBar
+            label={t("stats.work")}
+            value={spot.workFriendly}
+            animateOnHover
+          />
+          <StatBar
+            label={t("stats.quiet")}
+            value={spot.quiet}
+            animateOnHover
+          />
+          <StatBar
+            label={t("stats.value")}
+            value={spot.value}
+            animateOnHover
+          />
         </div>
 
         <button
@@ -97,7 +111,7 @@ export default function SpotCard({
         </span>
 
         <span className="absolute bottom-2 left-2 rounded px-2 py-1 text-lg font-bold text-white opacity-100 transition-opacity duration-50 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] group-hover:opacity-0">
-          {openNow ? "✅ Opened" : "❌ Closed"}
+          {openNow ? t("common.open") : t("common.closed")}
         </span>
       </div>
     </div>

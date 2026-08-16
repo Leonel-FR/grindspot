@@ -1,3 +1,5 @@
+import { useLanguage } from "@/components/LanguageProvider";
+
 function getBarColor(value) {
   if (value < 40) return "bg-[#ff4843]";
   if (value < 70) return "bg-[#ffc925]";
@@ -11,6 +13,11 @@ export default function StatBar({
   animateOnHover = false,
   animateOnMount = false,
 }) {
+  const { language } = useLanguage();
+  // Spanish stat labels ("⭐️ Calificación") run noticeably longer than
+  // their English source and don't fit the fixed-width side label without
+  // overflowing, so that language stacks the label above the bar instead.
+  const stacked = language === "es";
   const fillClass = animateOnHover
     ? "w-0 transition-[width] duration-225 ease-out group-hover:w-(--fill)"
     : animateOnMount
@@ -18,9 +25,9 @@ export default function StatBar({
       : "w-(--fill) transition-[width] duration-225 ease-out";
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={stacked ? "flex flex-col gap-1" : "flex items-center gap-3"}>
       <span
-        className={`w-17 shrink-0 text-sm ${light ? "text-muted" : "text-white"}`}
+        className={`shrink-0 text-sm ${stacked ? "" : "w-17"} ${light ? "text-muted" : "text-white"}`}
       >
         {label}
       </span>

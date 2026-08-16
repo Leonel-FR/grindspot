@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function MobileFilterSheet({
   sections,
@@ -8,6 +9,8 @@ export default function MobileFilterSheet({
   resultsCount,
   hasActiveFilters,
 }) {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handleKeyDown = (e) => {
@@ -32,15 +35,17 @@ export default function MobileFilterSheet({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Filters"
+      aria-label={t("mobileFilterSheet.title")}
       className="fixed inset-0 z-50 flex flex-col bg-white sm:hidden"
     >
       <header className="flex items-center justify-between px-5 py-4">
-        <h2 className="text-xl font-bold text-black">Filters</h2>
+        <h2 className="text-xl font-bold text-black">
+          {t("mobileFilterSheet.title")}
+        </h2>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close filters"
+          aria-label={t("mobileFilterSheet.close")}
           className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black focus:border-[#FF5A5F] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         >
           <svg
@@ -94,7 +99,8 @@ export default function MobileFilterSheet({
         onClick={onClose}
         className="w-full bg-[#FF5A5F] py-4 text-lg font-bold text-white focus:outline-none"
       >
-        Show results{hasActiveFilters ? ` (${resultsCount})` : ""}
+        {t("mobileFilterSheet.showResults")}
+        {hasActiveFilters ? ` (${resultsCount})` : ""}
       </button>
     </div>
   );

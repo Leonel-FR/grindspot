@@ -6,11 +6,13 @@ import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 import EmailModal from "@/components/EmailModal";
+import { useLanguage } from "@/components/LanguageProvider";
 import { spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
 
 export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
+  const { t } = useLanguage();
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [loadingSpotId, setLoadingSpotId] = useState(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -53,7 +55,7 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
       setSelectedSpot(await res.json());
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("spotsGrid.genericError"));
     } finally {
       setLoadingSpotId(null);
     }
@@ -159,7 +161,7 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
         </div>
       ) : (
         <p className="py-16 text-center text-lg font-bold text-gray-500">
-          🔍 No spots found
+          {t("spotsGrid.noResults")}
         </p>
       )}
 

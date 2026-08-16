@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function MultiSelectDropdown({
   label,
@@ -8,6 +9,7 @@ export default function MultiSelectDropdown({
   selected,
   onChange,
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
@@ -172,7 +174,7 @@ export default function MultiSelectDropdown({
                 onClick={() => onChange([])}
                 className="w-full cursor-pointer rounded-xl px-3 py-1.5 text-sm font-bold text-gray-500 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:outline-none"
               >
-                Clear all
+                {t("filterBar.clearAll")}
               </button>
             </div>
           )}

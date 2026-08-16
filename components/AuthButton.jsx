@@ -3,8 +3,11 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/components/LanguageProvider";
 
 function AuthButtonContent({ session, className }) {
+  const { t } = useLanguage();
+
   return session ? (
     <button
       className={className}
@@ -19,14 +22,14 @@ function AuthButtonContent({ session, className }) {
           className="rounded-full"
         />
       )}
-      Sign Out
+      {t("auth.signOut")}
     </button>
   ) : (
     <button
       className={className}
       onClick={() => signIn("google", { callbackUrl: "/?auth=signed-in" })}
     >
-      Login
+      {t("auth.login")}
     </button>
   );
 }
@@ -41,6 +44,7 @@ function AuthButtonContent({ session, className }) {
 // desktop row) instead.
 export default function AuthButton({ hasAccess }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const heroHidden = Boolean(session) && hasAccess;
 
   // signIn/signOut both redirect through Google or NextAuth's own routes and
@@ -54,12 +58,11 @@ export default function AuthButton({ hasAccess }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const authEvent = params.get("auth");
-    if (authEvent === "signed-in") toast.success("Signed in successfully!");
-    else if (authEvent === "signed-out")
-      toast.success("Signed out successfully!");
+    if (authEvent === "signed-in") toast.success(t("auth.signedIn"));
+    else if (authEvent === "signed-out") toast.success(t("auth.signedOut"));
     else return;
     window.history.replaceState(null, "", window.location.pathname);
-  }, []);
+  }, [t]);
 
   return (
     <AuthButtonContent

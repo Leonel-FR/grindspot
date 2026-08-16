@@ -1,7 +1,10 @@
 import Image from "next/image";
 import StatBar from "@/components/StatBar";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function SpotModal({ spot, onClose }) {
+  const { t } = useLanguage();
+
   // Stored as 24h "HH:MM" strings (isOpenNow.js compares them directly), but
   // shown as 12h with AM/PM.
   function formatTime(time) {
@@ -12,7 +15,7 @@ export default function SpotModal({ spot, onClose }) {
   }
 
   function formatHours(hours) {
-    if (!hours || hours.closed) return "❌ Closed";
+    if (!hours || hours.closed) return t("common.closed");
     return `${formatTime(hours.open)} - ${formatTime(hours.close)}`;
   }
 
@@ -78,19 +81,29 @@ export default function SpotModal({ spot, onClose }) {
 
           <div className="mt-6 flex flex-col gap-4">
             <StatBar
-              label="⭐️ Rating"
+              label={t("stats.rating")}
               value={(spot.rating / 5) * 100}
               light
               animateOnMount
             />
             <StatBar
-              label="💻 Work"
+              label={t("stats.work")}
               value={spot.workFriendly}
               light
               animateOnMount
             />
-            <StatBar label="🤫 Quiet" value={spot.quiet} light animateOnMount />
-            <StatBar label="💰 Value" value={spot.value} light animateOnMount />
+            <StatBar
+              label={t("stats.quiet")}
+              value={spot.quiet}
+              light
+              animateOnMount
+            />
+            <StatBar
+              label={t("stats.value")}
+              value={spot.value}
+              light
+              animateOnMount
+            />
           </div>
 
           <ul className="pt-6 font-semibold">
@@ -104,11 +117,13 @@ export default function SpotModal({ spot, onClose }) {
                     isToday ? "bg-blue-50 text-blue-700" : ""
                   }`}
                 >
-                  <span className="flex min-w-0 items-center gap-2 capitalize">
-                    <span className="truncate">{day}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="truncate">
+                      {t(`spotModal.days.${day}`)}
+                    </span>
                     {isToday && (
                       <span className="shrink-0 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                        Today
+                        {t("spotModal.today")}
                       </span>
                     )}
                   </span>
@@ -124,7 +139,7 @@ export default function SpotModal({ spot, onClose }) {
             rel="noopener noreferrer"
             className="bg-accent mt-6 block w-full rounded-md px-6 py-3 text-center text-sm font-semibold text-black"
           >
-            Open in Google Maps
+            {t("spotModal.openInMaps")}
           </a>
         </div>
       </div>
