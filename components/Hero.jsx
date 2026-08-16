@@ -82,9 +82,8 @@ export default function Hero({ hasAccess }) {
       <div className="absolute inset-0 bg-black/35" />
 
       <div className="relative z-10 flex flex-col items-center space-y-5 text-center md:space-y-6">
-        <h1 className="max-w-4xl text-4xl leading-none font-black tracking-[-0.4px] text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:max-w-6xl md:text-6xl">
-          {t("hero.titleLine1")}
-          <br className="hidden md:block" /> {t("hero.titleLine2")}
+        <h1 className="max-w-4xl text-balance text-4xl leading-none font-black tracking-[-0.4px] text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] md:max-w-6xl md:text-6xl">
+          {t("hero.title")}
         </h1>
         <p className="max-w-lg text-base leading-relaxed font-normal text-white/80 [text-shadow:0_2px_2px_rgba(0,0,0,0.9)]">
           {t("hero.subtitle")}
