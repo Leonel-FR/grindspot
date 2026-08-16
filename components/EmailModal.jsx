@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/components/LanguageProvider";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 // Rendered only while open, so every open starts from a clean state instead of
 // inheriting the previous attempt's loading state.
@@ -10,6 +13,11 @@ export default function EmailModal({ onClose }) {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const submittingRef = useRef(false);
+  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileError, setTurnstileError] = useState(false);
+  const turnstileContainerRef = useRef(null);
+  const widgetIdRef = useRef(null);
+  const tokenRef = useRef("");
 
   // Redirecting to Stripe never unmounts this page, so coming back through the
   // browser's back/forward cache restores it verbatim — button included, still
@@ -25,12 +33,53 @@ export default function EmailModal({ onClose }) {
     return () => window.removeEventListener("pageshow", handlePageShow);
   }, []);
 
+  // Rendered explicitly (render=explicit in the script src) instead of via
+  // the script's own auto-scan, which only scans the DOM once on load and
+  // would miss this container on every open after the first — the script
+  // stays cached across opens, but this component remounts fresh each time.
+  useEffect(() => {
+    if (!turnstileReady || !turnstileContainerRef.current) return;
+
+    widgetIdRef.current = window.turnstile.render(
+      turnstileContainerRef.current,
+      {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: (token) => {
+          tokenRef.current = token;
+        },
+        "expired-callback": () => {
+          tokenRef.current = "";
+        },
+        "error-callback": () => {
+          tokenRef.current = "";
+        },
+      }
+    );
+
+    return () => {
+      if (widgetIdRef.current) {
+        window.turnstile?.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+    };
+  }, [turnstileReady]);
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     // `loading` only blocks the button after a re-render; this blocks the
     // second submit of a fast double-click within the same tick.
     if (submittingRef.current) return;
+
+    if (!tokenRef.current) {
+      toast.error(
+        turnstileError
+          ? t("emailModal.verificationLoadError")
+          : t("emailModal.verificationRequired")
+      );
+      return;
+    }
+
     submittingRef.current = true;
 
     const email = e.target.email.value;
@@ -40,7 +89,7 @@ export default function EmailModal({ onClose }) {
       const res = await fetch("/api/billing/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken: tokenRef.current }),
       });
 
       const data = await res.json();
@@ -49,19 +98,29 @@ export default function EmailModal({ onClose }) {
         return;
       }
 
-      // Reached on rate-limiting or a genuine Stripe error — the "already
-      // has access" case above always returns a url, never lands here.
-      // The server sends an error *code*, never user-facing text, so the
-      // message shown always matches the selected language.
+      // Reached on rate-limiting, a failed bot check, or a genuine Stripe
+      // error — the "already has access" case above always returns a url,
+      // never lands here. The server sends an error *code*, never
+      // user-facing text, so the message shown always matches the selected
+      // language.
       toast.error(
         data.error === "rate_limited"
           ? t("emailModal.rateLimited")
-          : t("emailModal.genericError")
+          : data.error === "verification_failed"
+            ? t("emailModal.verificationFailed")
+            : t("emailModal.genericError")
       );
     } catch (err) {
       console.error(err);
       toast.error(t("emailModal.genericError"));
     }
+
+    // Tokens are single-use, so a widget left showing a stale one would just
+    // fail verification again — reset it so the retry gets a fresh token.
+    if (widgetIdRef.current) {
+      window.turnstile?.reset(widgetIdRef.current);
+    }
+    tokenRef.current = "";
 
     // Only reached when no redirect happened, so the user can correct the
     // email and submit again.
@@ -76,6 +135,12 @@ export default function EmailModal({ onClose }) {
       role="dialog"
       aria-modal="true"
     >
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        strategy="afterInteractive"
+        onReady={() => setTurnstileReady(true)}
+        onError={() => setTurnstileError(true)}
+      />
       <div
         className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8"
         onClick={(e) => e.stopPropagation()}
@@ -103,6 +168,13 @@ export default function EmailModal({ onClose }) {
             placeholder={t("emailModal.emailPlaceholder")}
             className="text-mc text-md w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           />
+          {turnstileError ? (
+            <p className="text-center text-xs text-gray-400">
+              {t("emailModal.verificationLoadError")}
+            </p>
+          ) : (
+            <div ref={turnstileContainerRef} className="flex justify-center" />
+          )}
           <button
             type="submit"
             disabled={loading}

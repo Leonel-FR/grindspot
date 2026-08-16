@@ -7,14 +7,19 @@ const isProd = process.env.NODE_ENV === "production";
 // needed here — add them if Stripe Elements/embedded checkout are adopted.
 // 'unsafe-eval' is dev-only: React/Fast Refresh use eval() for dev-mode
 // debugging (stack traces, HMR) and never in a production build.
+// challenges.cloudflare.com is Turnstile (bot check in EmailModal): the
+// widget script needs script-src, the challenge widget renders in a
+// sandboxed iframe so it needs frame-src, and some challenge modes call out
+// over XHR so it needs connect-src too.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://datafa.st${isProd ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://datafa.st https://challenges.cloudflare.com${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://grindspot-pull-zone.b-cdn.net https://lh3.googleusercontent.com",
   "media-src 'self' https://grindspot-pull-zone.b-cdn.net",
   "font-src 'self' data:",
-  "connect-src 'self' https://datafa.st",
+  "connect-src 'self' https://datafa.st https://challenges.cloudflare.com",
+  "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

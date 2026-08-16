@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import { stripe } from "@/lib/stripe";
 import { hasAccessByEmail } from "@/lib/access";
 import { checkoutRatelimit } from "@/lib/ratelimit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export async function POST(req) {
   try {
@@ -21,7 +22,15 @@ export async function POST(req) {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
 
-    const { email } = await req.json();
+    const { email, turnstileToken } = await req.json();
+
+    if (!(await verifyTurnstileToken(turnstileToken, ip))) {
+      return NextResponse.json(
+        { error: "verification_failed" },
+        { status: 403 }
+      );
+    }
+
     const origin = headersList.get("origin");
 
     // Guard against paying twice: the UI hides the CTAs for users who already
