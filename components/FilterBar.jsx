@@ -140,7 +140,7 @@ export default function FilterBar({
       </div>
 
       {/* Desktop: search bar + dropdowns */}
-      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3 sm:pt-6">
+      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <input
           type="text"
           value={search}
