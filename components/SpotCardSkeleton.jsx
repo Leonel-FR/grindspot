@@ -1,7 +1,7 @@
 export default function SpotCardSkeleton() {
   return (
     <div className="border-line overflow-hidden rounded-2xl border border-gray-300 bg-white">
-      <div className="aspect-5/4.5 animate-shimmer bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 bg-size-[200%_100%]" />
+      <div className="skeleton-card animate-skeleton aspect-5/4.5 w-full" />
     </div>
   );
 }
