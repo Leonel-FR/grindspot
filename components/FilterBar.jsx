@@ -111,7 +111,7 @@ export default function FilterBar({
     totalSelected > 0 || openNow || search.trim().length > 0;
 
   return (
-    <div className={`pb-5 ${heroHidden ? "pt-3 sm:pt-0" : ""}`}>
+    <div className={`pb-5 ${heroHidden ? "pt-3 sm:pt-6" : ""}`}>
       {/* Mobile: Filters button + search bar */}
       <div className="flex items-center gap-3 sm:hidden">
         <button
@@ -140,32 +140,37 @@ export default function FilterBar({
       </div>
 
       {/* Desktop: search bar + dropdowns */}
-      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search for name"
-          className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
-        />
-        {sections.map((section) => (
-          <MultiSelectDropdown
-            key={section.title}
-            label={section.title}
-            options={section.options}
-            selected={section.selected}
-            onChange={section.onChange}
+      <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search for name"
+            className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           />
-        ))}
-        <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
+          {sections.map((section) => (
+            <MultiSelectDropdown
+              key={section.title}
+              label={section.title}
+              options={section.options}
+              selected={section.selected}
+              onChange={section.onChange}
+            />
+          ))}
+          <OpenNowToggle checked={openNow} onChange={onOpenNowChange} />
 
-        {!hasAccess && (
-          <button
-            className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
-            onClick={onRequestAccess}
-          >
-            Join Grind-Spot.com
-          </button>
+          {!hasAccess && (
+            <button
+              className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
+              onClick={onRequestAccess}
+            >
+              Join Grind-Spot.com
+            </button>
+          )}
+        </div>
+        {heroHidden && (
+          <InlineAuthButton className="flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md" />
         )}
       </div>
 

@@ -35,9 +35,10 @@ function AuthButtonContent({ session, className }) {
 // without a session, or signed in without access), this renders fixed
 // top-right on every screen size, same spot the button lived in before it
 // was pulled out of Hero. Once Hero hides itself (signed in + access),
-// mobile has nowhere fixed-positioned to put this without covering other
-// content, so it's hidden here in favor of InlineAuthButton rendered inline
-// in FilterBar instead.
+// there's nowhere fixed-positioned to put this without covering other
+// content at any width, so it's hidden here entirely in favor of
+// InlineAuthButton rendered inline in FilterBar (both the mobile and the
+// desktop row) instead.
 export default function AuthButton({ hasAccess }) {
   const { data: session } = useSession();
   const heroHidden = Boolean(session) && hasAccess;
@@ -64,22 +65,27 @@ export default function AuthButton({ hasAccess }) {
     <AuthButtonContent
       session={session}
       className={`fixed top-4 right-4 z-10 cursor-pointer items-center gap-2 rounded-xl bg-[#FF5A5F] px-4 py-2.5 text-sm font-bold text-white md:top-6 md:right-6 md:px-5 md:py-2 md:text-base ${
-        heroHidden ? "hidden sm:flex" : "flex"
+        heroHidden ? "hidden" : "flex"
       }`}
     />
   );
 }
 
-// Renders in-flow (not fixed) for the mobile FilterBar layout. Only meant
-// to be mounted by the caller when heroHidden is true — see AuthButton's
-// comment above for why mobile needs a non-fixed fallback in that case.
-export function InlineAuthButton() {
+// Renders in-flow (not fixed) for the FilterBar layout — both its mobile
+// and desktop rows mount this with their own className, since the two
+// layouts need different sizing. Only meant to be mounted by the caller
+// when heroHidden is true — see AuthButton's comment above for why nothing
+// fixed-positioned works once Hero hides itself.
+export function InlineAuthButton({ className }) {
   const { data: session } = useSession();
 
   return (
     <AuthButtonContent
       session={session}
-      className="flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 text-sm font-bold text-white sm:hidden"
+      className={
+        className ??
+        "flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 text-sm font-bold text-white sm:hidden"
+      }
     />
   );
 }
