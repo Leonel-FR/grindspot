@@ -18,6 +18,23 @@ export default function EmailModal({ onClose }) {
   const turnstileContainerRef = useRef(null);
   const widgetIdRef = useRef(null);
   const tokenRef = useRef("");
+  const [demoPlaying, setDemoPlaying] = useState(false);
+  const demoVideoRef = useRef(null);
+
+  // Set optimistically so the play button disappears the instant it's
+  // clicked; a real user gesture practically never fails, but roll back if
+  // it somehow does so the button doesn't vanish with nothing playing.
+  async function playDemo() {
+    const video = demoVideoRef.current;
+    if (!video) return;
+    setDemoPlaying(true);
+    try {
+      await video.play();
+    } catch (err) {
+      console.error(err);
+      setDemoPlaying(false);
+    }
+  }
 
   // Redirecting to Stripe never unmounts this page, so coming back through the
   // browser's back/forward cache restores it verbatim — button included, still
@@ -142,7 +159,7 @@ export default function EmailModal({ onClose }) {
         onError={() => setTurnstileError(true)}
       />
       <div
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8"
+        className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -152,6 +169,43 @@ export default function EmailModal({ onClose }) {
         >
           ✕
         </button>
+
+        <div className="relative mb-6 aspect-video overflow-hidden rounded-xl bg-black">
+          <video
+            ref={demoVideoRef}
+            controls={demoPlaying}
+            preload="metadata"
+            playsInline
+            className="h-full w-full object-cover"
+            onPause={() => setDemoPlaying(false)}
+            onEnded={() => setDemoPlaying(false)}
+          >
+            <source
+              src="https://grindspot-pull-zone.b-cdn.net/hero-section/demo-grindspot.mp4"
+              type="video/mp4"
+            />
+          </video>
+
+          {!demoPlaying && (
+            <button
+              type="button"
+              onClick={playDemo}
+              aria-label={t("emailModal.playDemo")}
+              className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/20 transition-colors hover:bg-black/30"
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform group-hover:scale-105">
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  fill="#111827"
+                  className="h-6 w-6"
+                >
+                  <path d="M8 5v14l11-7-11-7Z" />
+                </svg>
+              </span>
+            </button>
+          )}
+        </div>
 
         <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
           {t("emailModal.title")}
