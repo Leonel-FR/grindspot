@@ -143,7 +143,7 @@ export default function SpotModal({ spot, onClose }) {
             href={spot.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-accent mt-6 block w-full rounded-md px-6 py-3 text-center text-sm font-semibold text-black"
+            className="bg-accent mt-6 block w-full cursor-pointer rounded-md px-6 py-3 text-center text-sm font-semibold text-black"
           >
             {t("spotModal.openInMaps")}
           </a>

@@ -124,7 +124,9 @@ export default function CookiesPage() {
       <ul>
         <li>
           <strong>Email:</strong>{" "}
-          <a href="mailto:leonelfr212@gmail.com">leonelfr212@gmail.com</a>
+          <a href="mailto:leonelfr212@gmail.com" className="cursor-pointer">
+            leonelfr212@gmail.com
+          </a>
         </li>
         <li>
           <strong>Location:</strong> Guadalajara, Jalisco, Mexico

@@ -46,7 +46,7 @@ export default function MobileFilterSheet({
           type="button"
           onClick={onClose}
           aria-label={t("mobileFilterSheet.close")}
-          className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black focus:border-[#FF5A5F] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black focus:border-[#FF5A5F] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         >
           <svg
             viewBox="0 0 20 20"
@@ -79,7 +79,7 @@ export default function MobileFilterSheet({
                     type="button"
                     aria-pressed={isSelected}
                     onClick={() => toggleOption(section, option)}
-                    className={`rounded-2xl border-2 px-4 py-2 font-bold text-black transition-colors ${
+                    className={`cursor-pointer rounded-2xl border-2 px-4 py-2 font-bold text-black transition-colors ${
                       isSelected
                         ? "border-[#FF5A5F]"
                         : "border-gray-300 bg-white"
@@ -97,7 +97,7 @@ export default function MobileFilterSheet({
       <button
         type="button"
         onClick={onClose}
-        className="w-full bg-[#FF5A5F] py-4 text-lg font-bold text-white focus:outline-none"
+        className="w-full cursor-pointer bg-[#FF5A5F] py-4 text-lg font-bold text-white focus:outline-none"
       >
         {t("mobileFilterSheet.showResults")}
         {hasActiveFilters ? ` (${resultsCount})` : ""}

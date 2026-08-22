@@ -208,7 +208,10 @@ export default function PrivacyPage() {
       </ul>
       <p>
         To exercise any of these rights, please email us at{" "}
-        <a href="mailto:leonelfr212@gmail.com">leonelfr212@gmail.com</a>. We
+        <a href="mailto:leonelfr212@gmail.com" className="cursor-pointer">
+          leonelfr212@gmail.com
+        </a>
+        . We
         will respond within 30 days.
       </p>
 
@@ -251,7 +254,9 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Email:</strong>{" "}
-          <a href="mailto:leonelfr212@gmail.com">leonelfr212@gmail.com</a>
+          <a href="mailto:leonelfr212@gmail.com" className="cursor-pointer">
+            leonelfr212@gmail.com
+          </a>
         </li>
       </ul>
     </LegalPage>

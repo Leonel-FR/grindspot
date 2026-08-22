@@ -55,28 +55,28 @@ export default function FooterContent({ showRefundLink, hasAccess }) {
           </div>
 
           <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-bold text-gray-600 sm:justify-start">
-            <Link href="/faq" className="hover:text-[#FF5A5F]">
+            <Link href="/faq" className="cursor-pointer hover:text-[#FF5A5F]">
               {t("footer.faq")}
             </Link>
-            <Link href="/terms" className="hover:text-[#FF5A5F]">
+            <Link href="/terms" className="cursor-pointer hover:text-[#FF5A5F]">
               {t("footer.terms")}
             </Link>
-            <Link href="/privacy" className="hover:text-[#FF5A5F]">
+            <Link href="/privacy" className="cursor-pointer hover:text-[#FF5A5F]">
               {t("footer.privacy")}
             </Link>
-            <Link href="/cookies" className="hover:text-[#FF5A5F]">
+            <Link href="/cookies" className="cursor-pointer hover:text-[#FF5A5F]">
               {t("footer.cookies")}
             </Link>
             {hasAccess && (
               <a
                 href={buildSuggestMailtoHref(session?.user?.email)}
-                className="hover:text-[#FF5A5F]"
+                className="cursor-pointer hover:text-[#FF5A5F]"
               >
                 {t("footer.suggestSpot")}
               </a>
             )}
             {showRefundLink && (
-              <a href={REFUND_MAILTO_HREF} className="hover:text-[#FF5A5F]">
+              <a href={REFUND_MAILTO_HREF} className="cursor-pointer hover:text-[#FF5A5F]">
                 {t("footer.refund")}
               </a>
             )}

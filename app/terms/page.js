@@ -79,7 +79,9 @@ export default function TermsPage() {
         <li>
           <strong>Refund Process:</strong> To request a refund, contact us
           at{" "}
-          <a href="mailto:leonelfr212@gmail.com">leonelfr212@gmail.com</a>{" "}
+          <a href="mailto:leonelfr212@gmail.com" className="cursor-pointer">
+            leonelfr212@gmail.com
+          </a>{" "}
           within 7 days of purchase.
         </li>
         <li>
@@ -195,7 +197,9 @@ export default function TermsPage() {
         </li>
         <li>
           <strong>Support Email:</strong>{" "}
-          <a href="mailto:leonelfr212@gmail.com">leonelfr212@gmail.com</a>
+          <a href="mailto:leonelfr212@gmail.com" className="cursor-pointer">
+            leonelfr212@gmail.com
+          </a>
         </li>
       </ul>
     </LegalPage>
