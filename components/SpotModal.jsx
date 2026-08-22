@@ -75,8 +75,14 @@ export default function SpotModal({ spot, onClose }) {
           </h2>
           <p className="text-muted mt-1 text-sm">{spot.address}</p>
           <p className="text-accent mt-1 flex items-baseline gap-1 text-sm font-semibold">
-            <span>{spot.priceRange}</span>
-            <span className="text-xs font-medium text-gray-500">MXN</span>
+            {spot.priceMin === 0 && spot.priceMax === 0 ? (
+              <span>{t("common.free")}</span>
+            ) : (
+              <>
+                <span>{spot.priceRange}</span>
+                <span className="text-xs font-medium text-gray-500">MXN</span>
+              </>
+            )}
           </p>
 
           <div className="mt-6 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-4">
