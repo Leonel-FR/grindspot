@@ -24,6 +24,13 @@ export async function POST(req) {
 
     const { email, turnstileToken } = await req.json();
 
+    // The client sends this from a type="email" input, but that's only
+    // enforced in the browser — a direct API call skips it entirely, and
+    // email flows straight into hasAccessByEmail/Stripe below.
+    if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "invalid_email" }, { status: 400 });
+    }
+
     if (!(await verifyTurnstileToken(turnstileToken, ip))) {
       return NextResponse.json(
         { error: "verification_failed" },
