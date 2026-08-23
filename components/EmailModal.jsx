@@ -9,7 +9,7 @@ const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 // Rendered only while open, so every open starts from a clean state instead of
 // inheriting the previous attempt's loading state.
-export default function EmailModal({ onClose }) {
+export default function EmailModal({ onClose, dismissable = true }) {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const submittingRef = useRef(false);
@@ -148,7 +148,7 @@ export default function EmailModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 px-4 py-6"
-      onClick={onClose}
+      onClick={dismissable ? onClose : undefined}
       role="dialog"
       aria-modal="true"
     >
@@ -162,13 +162,15 @@ export default function EmailModal({ onClose }) {
         className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-gray-500"
-        >
-          ✕
-        </button>
+        {dismissable && (
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-gray-500"
+          >
+            ✕
+          </button>
+        )}
 
         <div className="relative mb-6 aspect-video overflow-hidden rounded-xl bg-black">
           <video

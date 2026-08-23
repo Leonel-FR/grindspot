@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import SpotCard from "@/components/SpotCard";
 import FilterBar from "@/components/FilterBar";
 import EmailModal from "@/components/EmailModal";
@@ -19,6 +20,7 @@ export default function SpotsGrid({
 }) {
   const { t } = useLanguage();
   const router = useRouter();
+  const { data: session } = useSession();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
@@ -39,6 +41,16 @@ export default function SpotsGrid({
       window.history.replaceState(null, "", path);
     }
   }, [cities]);
+
+  // Reaching /[city] directly (typed URL, Google) with no session at all is
+  // the pSEO landing page's job — force the signup modal immediately instead
+  // of letting an anonymous visitor browse it like a signed-in-but-unpaid
+  // one could. Scoped to initialCity (the /[city] routes) so the plain
+  // homepage keeps showing the free teaser grid untouched. Derived directly
+  // (not synced via an effect + setState) so it can't ever be dismissed —
+  // there's no state to reset.
+  const forcedGate = Boolean(initialCity) && !session && !hasAccess;
+  const showEmailModal = emailModalOpen || forcedGate;
 
   // Paying users have nothing to buy, so the checkout modal never opens for
   // them — this also keeps a stale render from starting a second payment.
@@ -147,7 +159,10 @@ export default function SpotsGrid({
             <SpotCard
               key={spot.id}
               spot={spot}
-              onClick={() => router.push(`/${spot.citySlug}/${spot.slug}`)}
+              onClick={() => {
+                const from = encodeURIComponent(window.location.pathname);
+                router.push(`/${spot.citySlug}/${spot.slug}?from=${from}`);
+              }}
               liked={likedIds.has(spot.id)}
               onToggleLike={gate(() => toggleLike(spot))}
             />
@@ -159,8 +174,11 @@ export default function SpotsGrid({
         </p>
       )}
 
-      {emailModalOpen && (
-        <EmailModal onClose={() => setEmailModalOpen(false)} />
+      {showEmailModal && (
+        <EmailModal
+          onClose={() => setEmailModalOpen(false)}
+          dismissable={!forcedGate}
+        />
       )}
     </section>
   );

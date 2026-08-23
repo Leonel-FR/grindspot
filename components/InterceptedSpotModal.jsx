@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import SpotModal from "@/components/SpotModal";
 
-// router.back() (not a Link) so backwards navigation genuinely closes the
-// modal instead of pushing a new "closed" entry — the documented pattern
-// for intercepted-route modals.
-export default function InterceptedSpotModal({ spot }) {
+// Closes via an explicit push to closeHref rather than router.back() — see
+// the comment in app/@modal/(...)[city]/[spot]/page.js for why back() isn't
+// safe to rely on here.
+export default function InterceptedSpotModal({ spot, closeHref }) {
   const router = useRouter();
 
-  return <SpotModal spot={spot} onClose={() => router.back()} />;
+  return <SpotModal spot={spot} onClose={() => router.push(closeHref)} />;
 }
