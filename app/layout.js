@@ -94,7 +94,7 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, modal }) {
   return (
     <html
       lang="en"
@@ -116,6 +116,7 @@ export default function RootLayout({ children }) {
               strategy="afterInteractive"
             />
             {children}
+            {modal}
           </body>
         </SessionProvider>
       </LanguageProvider>

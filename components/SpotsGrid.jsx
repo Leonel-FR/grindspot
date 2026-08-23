@@ -1,28 +1,44 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import SpotCard from "@/components/SpotCard";
-import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 import EmailModal from "@/components/EmailModal";
 import { useLanguage } from "@/components/LanguageProvider";
 import { spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
+import { slugify } from "@/lib/slugify";
 
-export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
+export default function SpotsGrid({
+  spots,
+  hasAccess,
+  likedSpotIds,
+  initialCity,
+}) {
   const { t } = useLanguage();
-  const [selectedSpot, setSelectedSpot] = useState(null);
-  const [loadingSpotId, setLoadingSpotId] = useState(null);
+  const router = useRouter();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState(() => (initialCity ? [initialCity] : []));
   const [prices, setPrices] = useState([]);
   const [placeTypes, setPlaceTypes] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
+
+  // Keeps the URL bar in sync with the single-city case (grind-spot.com/
+  // zapopan) without a real navigation — a route change here would remount
+  // this component and lose every other filter (price, placeType, search).
+  // Same technique AuthButton.jsx already uses to scrub its own query param
+  // without a refetch.
+  useEffect(() => {
+    const path = cities.length === 1 ? `/${slugify(cities[0])}` : "/";
+    if (window.location.pathname !== path) {
+      window.history.replaceState(null, "", path);
+    }
+  }, [cities]);
 
   // Paying users have nothing to buy, so the checkout modal never opens for
   // them — this also keeps a stale render from starting a second payment.
@@ -31,8 +47,9 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
     setEmailModalOpen(true);
   };
 
-  // Filtering, opening a spot and liking are premium: without access the
-  // action is swapped for the sign-up modal.
+  // Filtering and liking are premium: without access the action is swapped
+  // for the sign-up modal. Opening a spot isn't gated here anymore — the
+  // route it navigates to decides that server-side (see app/@modal).
   const gate =
     (action) =>
     (...args) => {
@@ -42,24 +59,6 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
       }
       action(...args);
     };
-
-  // Cards only carry teaser fields (no address/mapsUrl/hours), so opening the
-  // modal fetches the full detail from the access-gated route on demand.
-  async function openSpot(spot) {
-    if (loadingSpotId) return;
-    setLoadingSpotId(spot.id);
-
-    try {
-      const res = await fetch(`/api/spots/${spot.id}`);
-      if (!res.ok) throw new Error("Failed to load spot details");
-      setSelectedSpot(await res.json());
-    } catch (err) {
-      console.error(err);
-      toast.error(t("spotsGrid.genericError"));
-    } finally {
-      setLoadingSpotId(null);
-    }
-  }
 
   async function toggleLike(spot) {
     const liked = likedIds.has(spot.id);
@@ -123,10 +122,6 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
 
   return (
     <section className="mx-auto max-w-345 px-6 py-1">
-      {/*<h2 className="font-display text-ink mb-6 text-xl font-bold">
-        {spots.length} spots to work from
-      </h2>
-      */}
       <FilterBar
         openNow={openNow}
         onOpenNowChange={gate(setOpenNow)}
@@ -152,10 +147,9 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
             <SpotCard
               key={spot.id}
               spot={spot}
-              onClick={gate(() => openSpot(spot))}
+              onClick={() => router.push(`/${spot.citySlug}/${spot.slug}`)}
               liked={likedIds.has(spot.id)}
               onToggleLike={gate(() => toggleLike(spot))}
-              loading={loadingSpotId === spot.id}
             />
           ))}
         </div>
@@ -163,10 +157,6 @@ export default function SpotsGrid({ spots, hasAccess, likedSpotIds }) {
         <p className="py-16 text-center text-lg font-bold text-gray-500">
           {t("spotsGrid.noResults")}
         </p>
-      )}
-
-      {selectedSpot && (
-        <SpotModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
       )}
 
       {emailModalOpen && (
