@@ -80,8 +80,8 @@ export default async function CityPage({ params }) {
         initialCity={cityName}
         hasAccess={Boolean(user)}
         likedSpotIds={likedSpotIds}
+        footer={<Footer />}
       />
-      <Footer />
     </main>
   );
 }

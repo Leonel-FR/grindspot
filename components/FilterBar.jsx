@@ -82,81 +82,94 @@ export default function FilterBar({
     (openNow ? 1 : 0) +
     (notClosingSoon ? 1 : 0);
   const hasActiveFilters = totalSelected > 0 || search.trim().length > 0;
+  const isMapView = view === "map";
 
   return (
-    <div className={`pb-5 ${heroHidden ? "pt-3 sm:pt-6" : ""}`}>
-      {/* Mobile: Filters button + search bar */}
-      <div className="flex items-center gap-3 sm:hidden">
-        <button
-          type="button"
-          onClick={() => setSheetOpen(true)}
-          className="flex shrink-0 items-center gap-1.5 rounded-3xl border-2 border-[#FF5A5F] bg-white px-4 py-2 font-bold text-[#FF5A5F] shadow-md focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
-        >
-          {t("filterBar.filtersButton")}
-          {totalSelected > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF5A5F] px-1.5 text-xs font-bold text-white">
-              {totalSelected}
-            </span>
-          )}
-        </button>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder={t("filterBar.searchPlaceholder")}
-          className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
-        />
-      </div>
-      <div className="mt-3 flex items-center justify-between gap-3 sm:hidden">
-        <ViewSwitcher view={view} onViewChange={onViewChange} />
-        {heroHidden && <InlineAuthButton />}
-      </div>
-
-      {/* Desktop: search bar + dropdowns */}
-      <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder={t("filterBar.searchPlaceholder")}
-          className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
-        />
-        {sections.map((section) => (
-          <MultiSelectDropdown
-            key={section.title}
-            label={section.title}
-            options={section.options}
-            selected={section.selected}
-            onChange={section.onChange}
-          />
-        ))}
-        <ToggleFilterButton
-          checked={openNow}
-          onChange={onOpenNowChange}
-          label={t("filterBar.openNow")}
-        />
-        <ToggleFilterButton
-          checked={notClosingSoon}
-          onChange={onNotClosingSoonChange}
-          label={t("filterBar.notClosingSoon")}
-        />
-        <ViewSwitcher view={view} onViewChange={onViewChange} />
-
-        {!hasAccess && (
+    <div
+      className={
+        // Map view: SpotsMap renders full-screen behind everything, so this
+        // becomes a floating, transparent overlay instead of an in-flow
+        // section — the pill-shaped controls below already carry their own
+        // solid backgrounds, so they stay legible over the map.
+        isMapView
+          ? "fixed inset-x-0 top-0 z-20 px-6 py-3"
+          : `pb-5 ${heroHidden ? "pt-3 sm:pt-6" : ""}`
+      }
+    >
+      <div className={isMapView ? "mx-auto max-w-345" : ""}>
+        {/* Mobile: Filters button + search bar */}
+        <div className="flex items-center gap-3 sm:hidden">
           <button
-            className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
-            onClick={onRequestAccess}
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            className="flex shrink-0 items-center gap-1.5 rounded-3xl border-2 border-[#FF5A5F] bg-white px-4 py-2 font-bold text-[#FF5A5F] shadow-md focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           >
-            {t("filterBar.join")}
+            {t("filterBar.filtersButton")}
+            {totalSelected > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF5A5F] px-1.5 text-xs font-bold text-white">
+                {totalSelected}
+              </span>
+            )}
           </button>
-        )}
-        {heroHidden && (
-          // ml-auto (not the parent's justify-between) so this stays
-          // pinned to the row's right edge when it fits, but still wraps
-          // onto — and re-pins to the right of — its own line instead of
-          // overflowing when the filters above it already fill the row.
-          <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md disabled:cursor-not-allowed disabled:opacity-70" />
-        )}
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder={t("filterBar.searchPlaceholder")}
+            className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+          />
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3 sm:hidden">
+          <ViewSwitcher view={view} onViewChange={onViewChange} />
+          {heroHidden && <InlineAuthButton />}
+        </div>
+
+        {/* Desktop: search bar + dropdowns */}
+        <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder={t("filterBar.searchPlaceholder")}
+            className="rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+          />
+          {sections.map((section) => (
+            <MultiSelectDropdown
+              key={section.title}
+              label={section.title}
+              options={section.options}
+              selected={section.selected}
+              onChange={section.onChange}
+            />
+          ))}
+          <ToggleFilterButton
+            checked={openNow}
+            onChange={onOpenNowChange}
+            label={t("filterBar.openNow")}
+          />
+          <ToggleFilterButton
+            checked={notClosingSoon}
+            onChange={onNotClosingSoonChange}
+            label={t("filterBar.notClosingSoon")}
+          />
+          <ViewSwitcher view={view} onViewChange={onViewChange} />
+
+          {!hasAccess && (
+            <button
+              className="cursor-pointer rounded-3xl bg-[#FF5A5F] px-4 py-3 font-bold text-white shadow-md"
+              onClick={onRequestAccess}
+            >
+              {t("filterBar.join")}
+            </button>
+          )}
+          {heroHidden && (
+            // ml-auto (not the parent's justify-between) so this stays
+            // pinned to the row's right edge when it fits, but still wraps
+            // onto — and re-pins to the right of — its own line instead of
+            // overflowing when the filters above it already fill the row.
+            <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md disabled:cursor-not-allowed disabled:opacity-70" />
+          )}
+        </div>
       </div>
 
       {sheetOpen && (

@@ -25,8 +25,8 @@ export default async function Home() {
         spots={spots}
         hasAccess={Boolean(user)}
         likedSpotIds={likedSpotIds}
+        footer={<Footer />}
       />
-      <Footer />
     </main>
   );
 }

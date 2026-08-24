@@ -18,7 +18,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 // sidesteps that resolution entirely.
 setWorkerUrl("/maplibre-gl-worker.mjs");
 
-const MAP_STYLE = "https://tiles.openfreemap.org/styles/dark";
+const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 
 // Guadalajara/Zapopan midpoint — only used before any spot or user location
 // is known, so the map never renders pointed at [0, 0].
@@ -84,8 +84,18 @@ export default function SpotsMap({ spots, onSpotClick }) {
       style: MAP_STYLE,
       center: FALLBACK_CENTER,
       zoom: FALLBACK_ZOOM,
+      // Locked to a flat 2D view — maxPitch: 0 makes tilting impossible
+      // through any input (drag, touch, keyboard), not just the UI
+      // gestures disabled below.
+      pitch: 0,
+      bearing: 0,
+      maxPitch: 0,
+      dragRotate: false,
+      pitchWithRotate: false,
+      touchPitch: false,
     });
-    map.addControl(new NavigationControl(), "top-right");
+    map.touchZoomRotate.disableRotation();
+    map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     mapRef.current = map;
 
     if (navigator.geolocation) {
@@ -148,7 +158,9 @@ export default function SpotsMap({ spots, onSpotClick }) {
     });
 
     // Frame every visible spot the first time markers land, unless the
-    // user's own location already claimed the initial view above.
+    // user's own location already claimed the initial view above. Extra
+    // top padding keeps markers from landing underneath FilterBar, which
+    // floats over the map as a transparent overlay in this view.
     if (
       !hasFittedRef.current &&
       !hasCenteredOnUserRef.current &&
@@ -156,15 +168,28 @@ export default function SpotsMap({ spots, onSpotClick }) {
     ) {
       const bounds = new LngLatBounds();
       spots.forEach((spot) => bounds.extend([spot.lng, spot.lat]));
-      map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 0 });
+      map.fitBounds(bounds, {
+        padding: { top: 140, bottom: 60, left: 60, right: 60 },
+        maxZoom: 15,
+        duration: 0,
+      });
     }
     if (spots.length > 0) hasFittedRef.current = true;
   }, [spots]);
 
+  // Always mounted full-screen: SpotsGrid only ever renders this component
+  // while view === "map", where the whole viewport becomes the map and
+  // FilterBar floats on top of it (see FilterBar.jsx's own view === "map"
+  // branch). Inline style, not a `fixed inset-0` className — maplibre-gl's
+  // own stylesheet sets `.maplibregl-map { position: relative }` on this
+  // exact element, and since its CSS chunk loads after Tailwind's utilities
+  // (dynamic-imported client component), it was winning the cascade and
+  // collapsing this to 0 height. Inline styles beat any stylesheet rule
+  // regardless of load order.
   return (
     <div
       ref={containerRef}
-      className="h-[70vh] min-h-100 w-full overflow-hidden rounded-2xl border border-gray-300"
+      style={{ position: "fixed", inset: 0, zIndex: 0 }}
     />
   );
 }
