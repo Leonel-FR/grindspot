@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# regenerated from node_modules by scripts/copy-maplibre-worker.mjs
+# (predev/prebuild) — see components/SpotsMap.jsx for why it's needed
+/public/maplibre-gl-worker.mjs
+/public/maplibre-gl-shared.mjs
+
 # production
 /build
 

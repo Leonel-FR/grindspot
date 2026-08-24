@@ -11,6 +11,11 @@ const isProd = process.env.NODE_ENV === "production";
 // widget script needs script-src, the challenge widget renders in a
 // sandboxed iframe so it needs frame-src, and some challenge modes call out
 // over XHR so it needs connect-src too.
+// tiles.openfreemap.org is SpotsMap's tile/style/sprite/glyph server
+// (maplibre-gl fetches all of it via connect-src, never <img src>); worker-src
+// blob: is needed because maplibre-gl parses vector tiles in a Web Worker it
+// spins up from a blob: URL, which falls back to default-src (no blob:)
+// without this.
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' https://datafa.st https://challenges.cloudflare.com${isProd ? "" : " 'unsafe-eval'"}`,
@@ -18,7 +23,8 @@ const contentSecurityPolicy = [
   "img-src 'self' data: https://grindspot-pull-zone.b-cdn.net https://lh3.googleusercontent.com",
   "media-src 'self' https://grindspot-pull-zone.b-cdn.net",
   "font-src 'self' data:",
-  "connect-src 'self' https://datafa.st https://challenges.cloudflare.com",
+  "connect-src 'self' https://datafa.st https://challenges.cloudflare.com https://tiles.openfreemap.org",
+  "worker-src 'self' blob:",
   "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
   "base-uri 'self'",
@@ -34,9 +40,12 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // geolocation=(self) — SpotsMap uses navigator.geolocation to show "you
+  // are here"; the previous geolocation=() disabled it site-wide, including
+  // for our own pages, not just third-party embeds.
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value: "camera=(), microphone=(), geolocation=(self)",
   },
   {
     key: "Strict-Transport-Security",

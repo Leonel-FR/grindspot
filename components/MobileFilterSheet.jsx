@@ -2,9 +2,14 @@
 
 import { useEffect } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
+import ToggleFilterButton from "@/components/ToggleFilterButton";
 
 export default function MobileFilterSheet({
   sections,
+  openNow,
+  onOpenNowChange,
+  notClosingSoon,
+  onNotClosingSoonChange,
   onClose,
   resultsCount,
   hasActiveFilters,
@@ -92,6 +97,19 @@ export default function MobileFilterSheet({
             </div>
           </section>
         ))}
+
+        <div className="flex flex-wrap gap-2">
+          <ToggleFilterButton
+            checked={openNow}
+            onChange={onOpenNowChange}
+            label={t("filterBar.openNow")}
+          />
+          <ToggleFilterButton
+            checked={notClosingSoon}
+            onChange={onNotClosingSoonChange}
+            label={t("filterBar.notClosingSoon")}
+          />
+        </div>
       </div>
 
       <button

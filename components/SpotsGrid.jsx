@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import toast from "react-hot-toast";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
@@ -12,6 +13,20 @@ import { spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
 import { slugify } from "@/lib/slugify";
+
+function MapSkeleton() {
+  return (
+    <div className="skeleton-card animate-skeleton h-[70vh] min-h-100 w-full rounded-2xl border border-gray-300" />
+  );
+}
+
+// maplibre-gl touches window/DOM on import, so it can only ever run in the
+// browser — ssr:false keeps it (and its bundle) out of the server render
+// and out of the initial JS payload for everyone still on the grid view.
+const SpotsMap = dynamic(() => import("@/components/SpotsMap"), {
+  ssr: false,
+  loading: MapSkeleton,
+});
 
 export default function SpotsGrid({
   spots,
@@ -26,11 +41,17 @@ export default function SpotsGrid({
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
+  const [notClosingSoon, setNotClosingSoon] = useState(false);
   const [cities, setCities] = useState(() => (initialCity ? [initialCity] : []));
   const [prices, setPrices] = useState([]);
   const [placeTypes, setPlaceTypes] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
+  const [view, setView] = useState("grid");
+  // Coordinates are premium data (see lib/spots.js), so they're never part
+  // of the `spots` teaser prop — fetched on demand, once, the first time
+  // the user actually switches to the map.
+  const [coordinates, setCoordinates] = useState(null);
 
   // Keeps the URL bar in sync with the single-city case (grind-spot.com/
   // zapopan) without a real navigation — a route change here would remount
@@ -74,6 +95,49 @@ export default function SpotsGrid({
       }
       action(...args);
     };
+
+  // Unlike the other filters above, switching to Map can't just reuse
+  // gate() — Grid must stay freely selectable (it's the existing free
+  // experience) while only Map itself is premium.
+  function handleViewChange(nextView) {
+    if (nextView === "map" && !hasAccess) {
+      requestAccess();
+      return;
+    }
+    setView(nextView);
+  }
+
+  // Coordinates are fetched once, the first time the user actually opens
+  // the map, and kept for the rest of the session — switching back and
+  // forth between Grid and Map shouldn't re-fetch every time. `coordinates`
+  // staying null while view === "map" doubles as the loading flag below.
+  useEffect(() => {
+    if (view !== "map" || !hasAccess || coordinates) return;
+
+    let cancelled = false;
+
+    fetch("/api/spots/map")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load map data");
+        return res.json();
+      })
+      .then((rows) => {
+        if (cancelled) return;
+        setCoordinates(
+          new Map(rows.map((row) => [row.id, { lat: row.lat, lng: row.lng }]))
+        );
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error(err);
+        toast.error(t("spotsGrid.genericError"));
+        setView("grid");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [view, hasAccess, coordinates, t]);
 
   // Cards only carry teaser fields (no address/mapsUrl/hours), so opening the
   // modal fetches the full detail from the access-gated route on demand.
@@ -138,6 +202,7 @@ export default function SpotsGrid({
 
     return spots.filter((spot) => {
       if (openNow && !spot.openNow) return false;
+      if (notClosingSoon && !spot.notClosingSoon) return false;
       if (cities.length > 0 && !cities.includes(spot.city)) return false;
       if (prices.length > 0 && !spotMatchesPriceRanges(spot, prices))
         return false;
@@ -151,13 +216,34 @@ export default function SpotsGrid({
       if (query && !spot.name.toLowerCase().includes(query)) return false;
       return true;
     });
-  }, [spots, openNow, cities, prices, placeTypes, ratings, search]);
+  }, [
+    spots,
+    openNow,
+    notClosingSoon,
+    cities,
+    prices,
+    placeTypes,
+    ratings,
+    search,
+  ]);
+
+  const spotsWithCoords = useMemo(() => {
+    if (!coordinates) return [];
+    return visibleSpots.flatMap((spot) => {
+      const coord = coordinates.get(spot.id);
+      return coord ? [{ ...spot, lat: coord.lat, lng: coord.lng }] : [];
+    });
+  }, [visibleSpots, coordinates]);
 
   return (
     <section className="mx-auto max-w-345 px-6 py-1">
       <FilterBar
         openNow={openNow}
         onOpenNowChange={gate(setOpenNow)}
+        notClosingSoon={notClosingSoon}
+        onNotClosingSoonChange={gate(setNotClosingSoon)}
+        view={view}
+        onViewChange={handleViewChange}
         cityOptions={cityOptions}
         cities={cities}
         onCitiesChange={gate(setCities)}
@@ -174,7 +260,11 @@ export default function SpotsGrid({
         onRequestAccess={requestAccess}
         hasAccess={hasAccess}
       />
-      {visibleSpots.length > 0 ? (
+      {visibleSpots.length === 0 ? (
+        <p className="py-16 text-center text-lg font-bold text-gray-500">
+          {t("spotsGrid.noResults")}
+        </p>
+      ) : view === "grid" ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {visibleSpots.map((spot) => (
             <SpotCard
@@ -187,10 +277,10 @@ export default function SpotsGrid({
             />
           ))}
         </div>
+      ) : coordinates ? (
+        <SpotsMap spots={spotsWithCoords} onSpotClick={gate(openSpot)} />
       ) : (
-        <p className="py-16 text-center text-lg font-bold text-gray-500">
-          {t("spotsGrid.noResults")}
-        </p>
+        <MapSkeleton />
       )}
 
       {selectedSpot && (
