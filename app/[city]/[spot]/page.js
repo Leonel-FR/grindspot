@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import PageHeader from "@/components/PageHeader";
+import SpotPageHeader from "@/components/SpotPageHeader";
 import Footer from "@/components/Footer";
 import SpotPageContent from "@/components/SpotPageContent";
 import { getSpots, findSpot, getSpotById } from "@/lib/spots";
@@ -57,7 +57,7 @@ export default async function SpotPage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageHeader />
+      <SpotPageHeader hasAccess={Boolean(user)} />
       <SpotPageContent spot={spot} fullDetail={fullDetail} citySlug={citySlug} />
       <Footer />
     </main>

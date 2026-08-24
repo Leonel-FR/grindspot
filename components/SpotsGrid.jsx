@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 import SpotCard from "@/components/SpotCard";
+import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
 import EmailModal from "@/components/EmailModal";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -19,8 +20,9 @@ export default function SpotsGrid({
   initialCity,
 }) {
   const { t } = useLanguage();
-  const router = useRouter();
   const { data: session } = useSession();
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [loadingSpotId, setLoadingSpotId] = useState(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [likedIds, setLikedIds] = useState(() => new Set(likedSpotIds));
   const [openNow, setOpenNow] = useState(false);
@@ -59,9 +61,10 @@ export default function SpotsGrid({
     setEmailModalOpen(true);
   };
 
-  // Filtering and liking are premium: without access the action is swapped
-  // for the sign-up modal. Opening a spot isn't gated here anymore — the
-  // route it navigates to decides that server-side (see app/@modal).
+  // Filtering, opening a spot and liking are premium: without access the
+  // action is swapped for the sign-up modal. The /[city]/[spot] pages exist
+  // purely for Google/direct links — the interactive app never navigates to
+  // them, it always opens the modal in place.
   const gate =
     (action) =>
     (...args) => {
@@ -71,6 +74,24 @@ export default function SpotsGrid({
       }
       action(...args);
     };
+
+  // Cards only carry teaser fields (no address/mapsUrl/hours), so opening the
+  // modal fetches the full detail from the access-gated route on demand.
+  async function openSpot(spot) {
+    if (loadingSpotId) return;
+    setLoadingSpotId(spot.id);
+
+    try {
+      const res = await fetch(`/api/spots/${spot.id}`);
+      if (!res.ok) throw new Error("Failed to load spot details");
+      setSelectedSpot(await res.json());
+    } catch (err) {
+      console.error(err);
+      toast.error(t("spotsGrid.genericError"));
+    } finally {
+      setLoadingSpotId(null);
+    }
+  }
 
   async function toggleLike(spot) {
     const liked = likedIds.has(spot.id);
@@ -159,12 +180,10 @@ export default function SpotsGrid({
             <SpotCard
               key={spot.id}
               spot={spot}
-              onClick={() => {
-                const from = encodeURIComponent(window.location.pathname);
-                router.push(`/${spot.citySlug}/${spot.slug}?from=${from}`);
-              }}
+              onClick={gate(() => openSpot(spot))}
               liked={likedIds.has(spot.id)}
               onToggleLike={gate(() => toggleLike(spot))}
+              loading={loadingSpotId === spot.id}
             />
           ))}
         </div>
@@ -172,6 +191,10 @@ export default function SpotsGrid({
         <p className="py-16 text-center text-lg font-bold text-gray-500">
           {t("spotsGrid.noResults")}
         </p>
+      )}
+
+      {selectedSpot && (
+        <SpotModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
       )}
 
       {showEmailModal && (

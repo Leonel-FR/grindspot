@@ -54,13 +54,6 @@ export default function SpotPageContent({ spot, fullDetail, citySlug }) {
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-12">
-      <Link
-        href={`/${citySlug}`}
-        className="text-sm font-bold text-gray-500 hover:text-[#FF5A5F]"
-      >
-        ← {t("spotPage.backToCity")} {spot.city}
-      </Link>
-
       <div className="relative mt-4 flex w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white md:h-128 md:flex-row">
         <div className="relative aspect-5/4.5 w-full shrink-0 md:aspect-square md:h-full md:w-auto">
           <Image
@@ -80,7 +73,7 @@ export default function SpotPageContent({ spot, fullDetail, citySlug }) {
           <p className="mt-1 text-sm text-gray-500">
             {fullDetail ? fullDetail.address : spot.city}
           </p>
-          <p className="mt-1 flex items-baseline gap-1 text-sm font-semibold text-[#FF5A5F]">
+          <p className="mt-1 flex items-baseline gap-1 text-sm font-semibold">
             {spot.priceMin === 0 && spot.priceMax === 0 ? (
               <span>{t("common.free")}</span>
             ) : (
