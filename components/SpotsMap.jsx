@@ -26,20 +26,51 @@ const FALLBACK_CENTER = [-103.38, 20.68];
 const FALLBACK_ZOOM = 11;
 
 function createSpotMarkerElement(spot) {
-  const el = document.createElement("div");
-  el.setAttribute("role", "button");
-  el.setAttribute("aria-label", spot.name);
-  el.title = spot.name;
-  el.style.cssText = `
+  const wrapper = document.createElement("div");
+  wrapper.setAttribute("role", "button");
+  wrapper.setAttribute("aria-label", spot.name);
+  wrapper.title = spot.name;
+  wrapper.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  `;
+
+  const dot = document.createElement("div");
+  dot.style.cssText = `
     width: 16px;
     height: 16px;
     border-radius: 9999px;
     border: 2px solid white;
     box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-    cursor: pointer;
     background-color: ${spot.openNow ? "#22c55e" : "#ef4444"};
   `;
-  return el;
+
+  // Name label under the dot — always visible (not hover-only), so spots
+  // can be identified at a glance without opening each one. Width hugs the
+  // text like the dot's own fixed size does, capped so a long name doesn't
+  // dominate the map.
+  const label = document.createElement("div");
+  label.textContent = spot.name;
+  label.style.cssText = `
+    margin-top: 4px;
+    max-width: 140px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background-color: rgba(17, 17, 17, 0.85);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  `;
+
+  wrapper.append(dot, label);
+  return wrapper;
 }
 
 function createUserMarkerElement() {
@@ -147,6 +178,10 @@ export default function SpotsMap({ spots, onSpotClick }) {
     markersRef.current = spots.map((spot) => {
       const marker = new Marker({
         element: createSpotMarkerElement(spot),
+        // Anchored to the dot at the top of the element (not maplibre's
+        // default center-of-element), so adding the label below no longer
+        // shifts the dot off the spot's actual coordinate.
+        anchor: "top",
       })
         .setLngLat([spot.lng, spot.lat])
         .addTo(map);
