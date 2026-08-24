@@ -6,6 +6,7 @@
   --animate-fill-up: fill-up 225ms ease-out;
   --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-skeleton: skeleton 0.8s ease-in-out infinite;
+  --ease-squish: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes fill-up {

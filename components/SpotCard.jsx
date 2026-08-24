@@ -54,7 +54,7 @@ export default function SpotCard({
       data-revealed={revealed}
       onClick={handleClick}
       aria-busy={loading}
-      className={`group border-line cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white ${
+      className={`group border-line ease-squish cursor-pointer overflow-hidden rounded-2xl border border-gray-300 bg-white transition-transform duration-200 active:scale-90 ${
         loading ? "pointer-events-none opacity-70" : ""
       }`}
     >
