@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { InlineAuthButton } from "@/components/AuthButton";
+import ProfileMenu from "@/components/ProfileMenu";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import ToggleFilterButton from "@/components/ToggleFilterButton";
@@ -97,8 +97,9 @@ export default function FilterBar({
       }
     >
       <div className={isMapView ? "mx-auto max-w-345" : ""}>
-        {/* Mobile: Filters button + search bar */}
+        {/* Mobile: profile + Filters button + search bar */}
         <div className="flex items-center gap-3 sm:hidden">
+          {heroHidden && <ProfileMenu />}
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
@@ -119,13 +120,13 @@ export default function FilterBar({
             className="w-full min-w-0 flex-1 rounded-3xl border-2 border-gray-300 px-4 py-2 font-bold placeholder:font-bold placeholder:text-black focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
           />
         </div>
-        <div className="mt-3 flex items-center justify-between gap-3 sm:hidden">
+        <div className="mt-3 flex items-center gap-3 sm:hidden">
           <ViewSwitcher view={view} onViewChange={onViewChange} />
-          {heroHidden && <InlineAuthButton />}
         </div>
 
-        {/* Desktop: search bar + dropdowns */}
+        {/* Desktop: profile + search bar + dropdowns */}
         <div className="hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          {heroHidden && <ProfileMenu />}
           <input
             type="text"
             value={search}
@@ -161,13 +162,6 @@ export default function FilterBar({
             >
               {t("filterBar.join")}
             </button>
-          )}
-          {heroHidden && (
-            // ml-auto (not the parent's justify-between) so this stays
-            // pinned to the row's right edge when it fits, but still wraps
-            // onto — and re-pins to the right of — its own line instead of
-            // overflowing when the filters above it already fill the row.
-            <InlineAuthButton className="ml-auto flex shrink-0 cursor-pointer items-center gap-2 rounded-3xl bg-[#FF5A5F] px-4 py-2 font-bold text-white shadow-md disabled:cursor-not-allowed disabled:opacity-70" />
           )}
         </div>
       </div>

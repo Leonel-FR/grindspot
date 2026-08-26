@@ -54,7 +54,11 @@ export default function ViewSwitcher({ view, onViewChange, className = "" }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-40 overflow-hidden rounded-2xl border-2 border-gray-300 bg-white shadow-lg">
+        // Mobile: the switcher sits at the left of its row, so the menu
+        // hangs off its left edge (right-0 pushed it partly off-screen).
+        // Desktop: it sits at the right of the filter row, so flip back to
+        // right-0 there. max-w is a viewport guard for the narrowest phones.
+        <div className="absolute left-0 z-20 mt-2 w-48 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border-2 border-gray-300 bg-white shadow-lg sm:left-auto sm:right-0 sm:w-44">
           <ul
             role="listbox"
             aria-label={t("filterBar.viewLabel")}

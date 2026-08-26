@@ -115,18 +115,23 @@ export default function SpotsMap({ spots, onSpotClick }) {
       style: MAP_STYLE,
       center: FALLBACK_CENTER,
       zoom: FALLBACK_ZOOM,
-      // Locked to a flat 2D view — maxPitch: 0 makes tilting impossible
-      // through any input (drag, touch, keyboard), not just the UI
-      // gestures disabled below.
+      // Stays a flat, top-down 2D map: maxPitch: 0 (plus touchPitch /
+      // pitchWithRotate off) makes tilting into the "3D" perspective view
+      // impossible through any input. Bearing rotation IS allowed though —
+      // right-drag (or ctrl/⌘-drag) with a mouse, two-finger twist on
+      // touch, or dragging the compass button below — so the map can be
+      // spun to line up with whichever way you're facing. The compass
+      // shows the current heading and snaps back to north when clicked.
       pitch: 0,
       bearing: 0,
       maxPitch: 0,
-      dragRotate: false,
       pitchWithRotate: false,
       touchPitch: false,
     });
-    map.touchZoomRotate.disableRotation();
-    map.addControl(new NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(
+      new NavigationControl({ showCompass: true, visualizePitch: false }),
+      "bottom-right"
+    );
     mapRef.current = map;
 
     if (navigator.geolocation) {
