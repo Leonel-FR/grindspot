@@ -7,12 +7,17 @@ import toast from "react-hot-toast";
 import SpotCard from "@/components/SpotCard";
 import SpotModal from "@/components/SpotModal";
 import FilterBar from "@/components/FilterBar";
+import FilterSidebar from "@/components/FilterSidebar";
+import MobileFilterSheet from "@/components/MobileFilterSheet";
 import EmailModal from "@/components/EmailModal";
 import { useLanguage } from "@/components/LanguageProvider";
-import { spotMatchesPriceRanges } from "@/lib/priceRanges";
+import { cn } from "@/lib/utils";
+import { PRICE_RANGES, spotMatchesPriceRanges } from "@/lib/priceRanges";
 import { spotMatchesRatingCategories } from "@/lib/ratingCategory";
 import { formatPlaceType } from "@/lib/placeTypes";
 import { slugify } from "@/lib/slugify";
+
+const PRICE_OPTIONS = PRICE_RANGES.map((range) => range.label);
 
 function MapSkeleton() {
   return <div className="skeleton-card animate-skeleton fixed inset-0" />;
@@ -54,6 +59,12 @@ export default function SpotsGrid({
   const [ratings, setRatings] = useState([]);
   const [search, setSearch] = useState("");
   const [view, setView] = useState("grid");
+  // Drives both the desktop docked FilterSidebar and the below-lg
+  // MobileFilterSheet. `isDesktop` decides which one a given `filtersOpen`
+  // actually renders (see the matchMedia effect below).
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const filtersButtonRef = useRef(null);
   // Coordinates are premium data (see lib/spots.js), so they're never part
   // of the `spots` teaser prop — fetched on demand, once, the first time
   // the user actually switches to the map.
@@ -100,6 +111,15 @@ export default function SpotsGrid({
     if (Array.isArray(stored.ratings)) setRatings(stored.ratings);
     if (typeof stored.search === "string") setSearch(stored.search);
     if (stored.view === "map") setView("map");
+    // Only reopen the panel on a viewport that actually gets the docked
+    // sidebar — restoring it on a phone would pop the full-screen sheet on
+    // every page load.
+    if (
+      stored.filtersOpen &&
+      window.matchMedia("(min-width: 1024px)").matches
+    ) {
+      setFiltersOpen(true);
+    }
     /* eslint-enable react-hooks/set-state-in-effect */
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally once, on mount only
   }, []);
@@ -125,6 +145,7 @@ export default function SpotsGrid({
           ratings,
           search,
           view,
+          filtersOpen,
         })
       );
     } catch {
@@ -140,7 +161,20 @@ export default function SpotsGrid({
     ratings,
     search,
     view,
+    filtersOpen,
   ]);
+
+  // Which filter surface a truthy `filtersOpen` renders: the docked sidebar
+  // at lg+, the full-screen sheet below it. Tracked in state (not just CSS)
+  // because the sheet locks body scroll on mount — it must not even mount on
+  // desktop.
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setIsDesktop(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
   // Keeps the URL bar in sync with the single-city case (grind-spot.com/
   // zapopan) without a real navigation — a route change here would remount
@@ -334,76 +368,182 @@ export default function SpotsGrid({
     });
   }, [visibleSpots, coordinates]);
 
+  // Same three sections FilterBar used to build itself; now owned here since
+  // both the sidebar and the mobile sheet consume them. Each onChange is
+  // gated, so a no-access visitor tapping a chip still gets the sign-up
+  // modal. (Rating stays commented out — not in use yet, logic intact.)
+  const filterSections = [
+    {
+      title: t("filterBar.city"),
+      options: cityOptions,
+      selected: cities,
+      onChange: gate(setCities),
+    },
+    {
+      title: t("filterBar.price"),
+      options: PRICE_OPTIONS,
+      selected: prices,
+      onChange: gate(setPrices),
+    },
+    {
+      title: t("filterBar.placeType"),
+      options: placeTypeOptions,
+      selected: placeTypes,
+      onChange: gate(setPlaceTypes),
+    },
+  ];
+
+  const totalSelected =
+    cities.length +
+    prices.length +
+    placeTypes.length +
+    (openNow ? 1 : 0) +
+    (notClosingSoon ? 1 : 0);
+  const hasActiveFilters = totalSelected > 0 || search.trim().length > 0;
+
+  const clearAllFilters = gate(() => {
+    setCities([]);
+    setPrices([]);
+    setPlaceTypes([]);
+    setOpenNow(false);
+    setNotClosingSoon(false);
+  });
+
+  // Hero renders null once signed in + paid, making this the top of the page
+  // — the only case the inline profile avatar shows and the row wants extra
+  // top breathing room.
+  const heroHidden = Boolean(session) && hasAccess;
+  const isMapView = view === "map";
+
+  const filterPanelProps = {
+    sections: filterSections,
+    openNow,
+    onOpenNowChange: gate(setOpenNow),
+    notClosingSoon,
+    onNotClosingSoonChange: gate(setNotClosingSoon),
+    view,
+    onViewChange: handleViewChange,
+    hasActiveFilters,
+    onClearAll: clearAllFilters,
+  };
+
   return (
     <>
-      <section className="mx-auto max-w-345 px-6 py-1">
+      {/* Top bar — sticky in grid view, a transparent overlay in map view
+          (the map is fixed behind everything then). lg:h-16 is load-bearing:
+          FilterSidebar anchors to top-16 / calc(100dvh-4rem). */}
+      <div
+        className={cn(
+          "z-40 px-6 py-3 lg:flex lg:h-16 lg:items-center lg:py-0",
+          isMapView
+            ? "fixed inset-x-0 top-0"
+            : "sticky top-0 border-b border-gray-100 bg-white",
+          !isMapView && heroHidden && "pt-3 sm:pt-4",
+          isMapView && filtersOpen && "lg:left-80"
+        )}
+      >
         <FilterBar
-          openNow={openNow}
-          onOpenNowChange={gate(setOpenNow)}
-          notClosingSoon={notClosingSoon}
-          onNotClosingSoonChange={gate(setNotClosingSoon)}
-          view={view}
-          onViewChange={handleViewChange}
-          cityOptions={cityOptions}
-          cities={cities}
-          onCitiesChange={gate(setCities)}
-          prices={prices}
-          onPricesChange={gate(setPrices)}
-          placeTypeOptions={placeTypeOptions}
-          placeTypes={placeTypes}
-          onPlaceTypesChange={gate(setPlaceTypes)}
-          ratings={ratings}
-          onRatingsChange={gate(setRatings)}
           search={search}
           onSearchChange={gate(setSearch)}
-          resultsCount={visibleSpots.length}
-          onRequestAccess={requestAccess}
+          view={view}
+          onViewChange={handleViewChange}
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+          totalSelected={totalSelected}
           hasAccess={hasAccess}
+          onRequestAccess={requestAccess}
+          filtersButtonRef={filtersButtonRef}
         />
-        {visibleSpots.length === 0 ? (
-          <p
-            className={
-              view === "map"
-                ? "fixed inset-0 flex items-center justify-center bg-white text-center text-lg font-bold text-gray-500"
-                : "py-16 text-center text-lg font-bold text-gray-500"
-            }
-          >
-            {t("spotsGrid.noResults")}
-          </p>
-        ) : view === "grid" ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {visibleSpots.map((spot) => (
-              <SpotCard
-                key={spot.id}
-                spot={spot}
-                onClick={gate(() => openSpot(spot))}
-                liked={likedIds.has(spot.id)}
-                onToggleLike={gate(() => toggleLike(spot))}
-                loading={loadingSpotId === spot.id}
-              />
-            ))}
-          </div>
-        ) : coordinates ? (
-          <SpotsMap spots={spotsWithCoords} onSpotClick={gate(openSpot)} />
-        ) : (
-          <MapSkeleton />
-        )}
+      </div>
 
-        {selectedSpot && (
-          <SpotModal
-            spot={selectedSpot}
-            onClose={() => setSelectedSpot(null)}
-          />
-        )}
+      {/* Desktop docked filter panel (lg+ only, CSS-hidden below) */}
+      <FilterSidebar
+        open={filtersOpen && isDesktop}
+        onClose={() => setFiltersOpen(false)}
+        triggerRef={filtersButtonRef}
+        {...filterPanelProps}
+      />
 
-        {showEmailModal && (
-          <EmailModal
-            onClose={() => setEmailModalOpen(false)}
-            dismissable={!forcedGate}
-          />
+      {/* Content — slides right to clear the sidebar on lg+ */}
+      <div
+        className={cn(
+          "transition-[padding] duration-300 ease-out motion-reduce:transition-none",
+          filtersOpen ? "lg:pl-80" : "lg:pl-0"
         )}
-      </section>
-      {view !== "map" && footer}
+      >
+        <section className="px-6 pt-4 pb-1">
+          {visibleSpots.length === 0 ? (
+            <p
+              className={cn(
+                "text-center text-lg font-bold text-gray-500",
+                isMapView
+                  ? "fixed inset-0 flex items-center justify-center bg-white"
+                  : "py-16",
+                isMapView && filtersOpen && "lg:left-80"
+              )}
+            >
+              {t("spotsGrid.noResults")}
+            </p>
+          ) : view === "grid" ? (
+            <div
+              className={cn(
+                "grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3",
+                filtersOpen
+                  ? "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+                  : "lg:grid-cols-4"
+              )}
+            >
+              {visibleSpots.map((spot) => (
+                <SpotCard
+                  key={spot.id}
+                  spot={spot}
+                  onClick={gate(() => openSpot(spot))}
+                  liked={likedIds.has(spot.id)}
+                  onToggleLike={gate(() => toggleLike(spot))}
+                  loading={loadingSpotId === spot.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              className={cn("fixed inset-0 z-0", filtersOpen && "lg:left-80")}
+            >
+              {coordinates ? (
+                <SpotsMap
+                  spots={spotsWithCoords}
+                  onSpotClick={gate(openSpot)}
+                />
+              ) : (
+                <div className="skeleton-card animate-skeleton absolute inset-0" />
+              )}
+            </div>
+          )}
+
+          {selectedSpot && (
+            <SpotModal
+              spot={selectedSpot}
+              onClose={() => setSelectedSpot(null)}
+            />
+          )}
+
+          {showEmailModal && (
+            <EmailModal
+              onClose={() => setEmailModalOpen(false)}
+              dismissable={!forcedGate}
+            />
+          )}
+        </section>
+        {!isMapView && footer}
+      </div>
+
+      {/* Below-lg full-screen filter takeover */}
+      {filtersOpen && !isDesktop && (
+        <MobileFilterSheet
+          {...filterPanelProps}
+          onClose={() => setFiltersOpen(false)}
+          resultsCount={visibleSpots.length}
+        />
+      )}
     </>
   );
 }

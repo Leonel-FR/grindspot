@@ -108,7 +108,7 @@ export default function RootLayout({ children }) {
               dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <Toaster position="top-center" />
-            <LanguageToggle className="fixed bottom-4 left-4 z-20 flex shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-black shadow-md backdrop-blur-sm transition-colors hover:bg-white" />
+            <LanguageToggle className="fixed bottom-4 left-4 z-40 flex shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-black shadow-md backdrop-blur-sm transition-colors hover:bg-white" />
             <Script
               src="https://datafa.st/js/script.js"
               data-website-id="dfid_Db0mcaFtGlQOhXaes5qBT"

@@ -217,19 +217,16 @@ export default function SpotsMap({ spots, onSpotClick }) {
     if (spots.length > 0) hasFittedRef.current = true;
   }, [spots]);
 
-  // Always mounted full-screen: SpotsGrid only ever renders this component
-  // while view === "map", where the whole viewport becomes the map and
-  // FilterBar floats on top of it (see FilterBar.jsx's own view === "map"
-  // branch). Inline style, not a `fixed inset-0` className — maplibre-gl's
-  // own stylesheet sets `.maplibregl-map { position: relative }` on this
-  // exact element, and since its CSS chunk loads after Tailwind's utilities
-  // (dynamic-imported client component), it was winning the cascade and
-  // collapsing this to 0 height. Inline styles beat any stylesheet rule
-  // regardless of load order.
+  // Fills its parent: SpotsGrid wraps this in a `fixed inset-0` element that
+  // it shifts right (lg:left-80) when the filter sidebar is open, so the map
+  // canvas resizes with the available space instead of hiding under it.
+  // Inline `position: absolute`, not a Tailwind class — maplibre-gl's own
+  // stylesheet sets `.maplibregl-map { position: relative }` on this exact
+  // element, and since its CSS chunk loads after Tailwind's utilities
+  // (dynamic-imported client component) it wins the cascade and collapses
+  // this to 0 height. Inline styles beat any stylesheet rule regardless of
+  // load order; `inset: 0` then sizes it to the fixed wrapper.
   return (
-    <div
-      ref={containerRef}
-      style={{ position: "fixed", inset: 0, zIndex: 0 }}
-    />
+    <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
   );
 }
