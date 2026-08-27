@@ -108,7 +108,7 @@ export default function Hero({ hasAccess }) {
       >
         <path
           d="M0,110 C300,240 1140,-20 1440,110 L1440,220 L0,220 Z"
-          fill="#FFFFFF"
+          fill="#fbfaf8"
         />
       </svg>
     </section>

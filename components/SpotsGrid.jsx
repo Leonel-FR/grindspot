@@ -41,6 +41,7 @@ export default function SpotsGrid({
   hasAccess,
   likedSpotIds,
   initialCity,
+  hero,
   footer,
 }) {
   const { t } = useLanguage();
@@ -64,6 +65,11 @@ export default function SpotsGrid({
   // actually renders (see the matchMedia effect below).
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  // Anon / unpaid visitors land on the marketing Hero. Nomad-List style, the
+  // first tap on Filters swaps that Hero out for the plain grid + open panel;
+  // it stays gone (closing the panel doesn't bring it back) until a reload,
+  // so this is deliberately ephemeral — never persisted.
+  const [heroDismissed, setHeroDismissed] = useState(false);
   const filtersButtonRef = useRef(null);
   // Coordinates are premium data (see lib/spots.js), so they're never part
   // of the `spots` teaser prop — fetched on demand, once, the first time
@@ -409,11 +415,24 @@ export default function SpotsGrid({
     setNotClosingSoon(false);
   });
 
-  // Hero renders null once signed in + paid, making this the top of the page
-  // — the only case the inline profile avatar shows and the row wants extra
-  // top breathing room.
-  const heroHidden = Boolean(session) && hasAccess;
+  // True whenever this row is the top of the page: signed in + paid (Hero
+  // renders null), or an anon/unpaid visitor who tapped Filters and dropped
+  // the Hero for this page view. Drives the extra top padding and the inline
+  // auth control in the row.
+  const heroHidden = (Boolean(session) && hasAccess) || heroDismissed;
   const isMapView = view === "map";
+
+  // First Filters tap while the Hero is still up: swap it for the grid and
+  // force the panel open. After that it's an ordinary open/close toggle.
+  const handleToggleFilters = () => {
+    if (!heroDismissed && !(Boolean(session) && hasAccess)) {
+      setHeroDismissed(true);
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      setFiltersOpen(true);
+      return;
+    }
+    setFiltersOpen((prev) => !prev);
+  };
 
   const filterPanelProps = {
     sections: filterSections,
@@ -429,6 +448,12 @@ export default function SpotsGrid({
 
   return (
     <>
+      {/* Marketing Hero + its fixed top-right auth pill (a keyed [AuthButton,
+          Hero] array from the page) — shown only until the visitor drops the
+          Hero via Filters; Hero itself also returns null once signed in +
+          paid. */}
+      {!heroDismissed && hero}
+
       {/* Top bar — sticky in grid view, a transparent overlay in map view
           (the map is fixed behind everything then). lg:h-16 is load-bearing:
           FilterSidebar anchors to top-16 / calc(100dvh-4rem). */}
@@ -437,7 +462,7 @@ export default function SpotsGrid({
           "z-40 px-6 py-3 sm:px-8 lg:flex lg:h-16 lg:items-center lg:px-12 lg:py-0",
           isMapView
             ? "fixed inset-x-0 top-0"
-            : "sticky top-0 border-b border-gray-100 bg-[#fbfaf8]",
+            : "sticky top-0 bg-[#fbfaf8]",
           !isMapView && heroHidden && "pt-3 sm:pt-4",
           isMapView && filtersOpen && "lg:left-80"
         )}
@@ -448,7 +473,8 @@ export default function SpotsGrid({
           view={view}
           onViewChange={handleViewChange}
           filtersOpen={filtersOpen}
-          onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+          onToggleFilters={handleToggleFilters}
+          heroDismissed={heroDismissed}
           totalSelected={totalSelected}
           hasAccess={hasAccess}
           onRequestAccess={requestAccess}

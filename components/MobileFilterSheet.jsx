@@ -49,7 +49,7 @@ export default function MobileFilterSheet({
           type="button"
           onClick={onClose}
           aria-label={t("mobileFilterSheet.close")}
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black focus:border-[#FF5A5F] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black transition-colors focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
         >
           <svg
             viewBox="0 0 20 20"

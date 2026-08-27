@@ -58,13 +58,13 @@ export default function FilterSidebar({
           type="button"
           onClick={close}
           aria-label={t("mobileFilterSheet.close")}
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 font-bold text-black focus:border-[#FF5A5F] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+          className="-mr-1 cursor-pointer rounded p-1 text-gray-500 transition-colors hover:text-black focus:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa49f]"
         >
           <svg
             viewBox="0 0 20 20"
             fill="none"
             aria-hidden="true"
-            className="h-4 w-4"
+            className="h-5 w-5"
           >
             <path
               d="M5 5 15 15M15 5 5 15"

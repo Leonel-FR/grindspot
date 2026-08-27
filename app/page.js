@@ -19,12 +19,14 @@ export default async function Home() {
 
   return (
     <main>
-      <AuthButton hasAccess={Boolean(user)} />
-      <Hero hasAccess={Boolean(user)} />
       <SpotsGrid
         spots={spots}
         hasAccess={Boolean(user)}
         likedSpotIds={likedSpotIds}
+        hero={[
+          <AuthButton key="auth" hasAccess={Boolean(user)} />,
+          <Hero key="hero" hasAccess={Boolean(user)} />,
+        ]}
         footer={<Footer />}
       />
     </main>

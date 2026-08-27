@@ -73,13 +73,15 @@ export default async function CityPage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <AuthButton hasAccess={Boolean(user)} />
-      <Hero hasAccess={Boolean(user)} />
       <SpotsGrid
         spots={spots}
         initialCity={cityName}
         hasAccess={Boolean(user)}
         likedSpotIds={likedSpotIds}
+        hero={[
+          <AuthButton key="auth" hasAccess={Boolean(user)} />,
+          <Hero key="hero" hasAccess={Boolean(user)} />,
+        ]}
         footer={<Footer />}
       />
     </main>
