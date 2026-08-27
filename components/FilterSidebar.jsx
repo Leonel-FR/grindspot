@@ -76,7 +76,7 @@ export default function FilterSidebar({
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-24">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-24">
         <FilterPanel
           sections={sections}
           openNow={openNow}

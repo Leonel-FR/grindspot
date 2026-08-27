@@ -39,7 +39,10 @@ export default function MobileFilterSheet({
       role="dialog"
       aria-modal="true"
       aria-label={t("mobileFilterSheet.title")}
-      className="fixed inset-0 z-50 flex flex-col bg-[#fbfaf8] lg:hidden"
+      // h-dvh (not inset-0) so the sheet tracks the *visible* viewport as the
+      // mobile URL bar shows/hides — otherwise scrolling to top on open
+      // reveals the URL bar and buries the "Show results" button off-screen.
+      className="fixed inset-x-0 top-0 z-50 flex h-dvh flex-col overflow-hidden bg-[#fbfaf8] lg:hidden"
     >
       <header className="flex items-center justify-between px-5 py-4">
         <h2 className="text-xl font-bold text-black">
@@ -67,7 +70,7 @@ export default function MobileFilterSheet({
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
         <FilterPanel
           sections={sections}
           openNow={openNow}

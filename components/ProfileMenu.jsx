@@ -140,14 +140,14 @@ export default function ProfileMenu({ className = "" }) {
         // up is the only state cue. focus-visible (not focus) means the ring
         // shows only for keyboard focus, never a mouse click, while still
         // keeping the control keyboard-accessible.
-        className="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#FF5A5F] text-sm font-bold text-white shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa49f] sm:h-10 sm:w-10"
+        className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#FF5A5F] font-bold text-white shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa49f] sm:h-11 sm:w-11"
       >
         {image ? (
           <Image
             src={image}
             alt=""
-            width={40}
-            height={40}
+            width={44}
+            height={44}
             className="h-full w-full rounded-full object-cover"
           />
         ) : (
