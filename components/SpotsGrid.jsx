@@ -434,10 +434,10 @@ export default function SpotsGrid({
           FilterSidebar anchors to top-16 / calc(100dvh-4rem). */}
       <div
         className={cn(
-          "z-40 px-6 py-3 lg:flex lg:h-16 lg:items-center lg:py-0",
+          "z-40 px-6 py-3 sm:px-8 lg:flex lg:h-16 lg:items-center lg:px-12 lg:py-0",
           isMapView
             ? "fixed inset-x-0 top-0"
-            : "sticky top-0 border-b border-gray-100 bg-white",
+            : "sticky top-0 border-b border-gray-100 bg-[#fbfaf8]",
           !isMapView && heroHidden && "pt-3 sm:pt-4",
           isMapView && filtersOpen && "lg:left-80"
         )}
@@ -471,7 +471,7 @@ export default function SpotsGrid({
           filtersOpen ? "lg:pl-80" : "lg:pl-0"
         )}
       >
-        <section className="px-6 pt-4 pb-1">
+        <section className="px-6 pt-4 pb-1 sm:px-8 lg:px-12">
           {visibleSpots.length === 0 ? (
             <p
               className={cn(

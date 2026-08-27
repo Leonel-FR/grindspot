@@ -4,11 +4,15 @@ import { useEffect, useRef } from "react";
 import {
   Map as MapLibreMap,
   Marker,
-  NavigationControl,
   LngLatBounds,
   setWorkerUrl,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useLanguage } from "@/components/LanguageProvider";
+
+// Shared by the spot markers and the on-map legend so the two never drift.
+const MARKER_OPEN_COLOR = "#22c55e";
+const MARKER_CLOSED_COLOR = "#ef4444";
 
 // maplibre-gl normally resolves its Web Worker via import.meta.url, which
 // Next's bundler doesn't rewrite correctly — the worker silently fails to
@@ -44,7 +48,7 @@ function createSpotMarkerElement(spot) {
     border-radius: 9999px;
     border: 2px solid white;
     box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-    background-color: ${spot.openNow ? "#22c55e" : "#ef4444"};
+    background-color: ${spot.openNow ? MARKER_OPEN_COLOR : MARKER_CLOSED_COLOR};
   `;
 
   // Name label under the dot — always visible (not hover-only), so spots
@@ -118,20 +122,18 @@ export default function SpotsMap({ spots, onSpotClick }) {
       // Stays a flat, top-down 2D map: maxPitch: 0 (plus touchPitch /
       // pitchWithRotate off) makes tilting into the "3D" perspective view
       // impossible through any input. Bearing rotation IS allowed though —
-      // right-drag (or ctrl/⌘-drag) with a mouse, two-finger twist on
-      // touch, or dragging the compass button below — so the map can be
-      // spun to line up with whichever way you're facing. The compass
-      // shows the current heading and snaps back to north when clicked.
+      // right-drag (or ctrl/⌘-drag) with a mouse, or a two-finger twist on
+      // touch — so the map can be spun to line up with whichever way you're
+      // facing; bearingSnap pulls it back to true north once you let go
+      // near it.
       pitch: 0,
       bearing: 0,
       maxPitch: 0,
       pitchWithRotate: false,
       touchPitch: false,
     });
-    map.addControl(
-      new NavigationControl({ showCompass: true, visualizePitch: false }),
-      "bottom-right"
-    );
+    // No NavigationControl: the zoom +/- buttons and the compass are both
+    // off. Zoom still works via pinch / scroll / the +/- keys.
     mapRef.current = map;
 
     if (navigator.geolocation) {
@@ -225,8 +227,41 @@ export default function SpotsMap({ spots, onSpotClick }) {
   // element, and since its CSS chunk loads after Tailwind's utilities
   // (dynamic-imported client component) it wins the cascade and collapses
   // this to 0 height. Inline styles beat any stylesheet rule regardless of
-  // load order; `inset: 0` then sizes it to the fixed wrapper.
+  // load order; `inset: 0` then sizes it to the fixed wrapper. The legend is
+  // a sibling in that same wrapper, so it rides along with the resize.
   return (
-    <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
+    <>
+      <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
+      <MapLegend />
+    </>
+  );
+}
+
+// Bottom-right corner, lifted just enough to clear maplibre's attribution
+// line. pointer-events-none so it never eats a drag/pan that passes over it.
+function MapLegend() {
+  const { t } = useLanguage();
+
+  const rows = [
+    { color: MARKER_OPEN_COLOR, label: t("mapLegend.open") },
+    { color: MARKER_CLOSED_COLOR, label: t("mapLegend.closed") },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute right-2.5 bottom-8 z-3 flex flex-col gap-1.5 rounded-2xl border-2 border-gray-200 bg-white px-3 py-2.5 shadow-lg">
+      {rows.map((row) => (
+        <span
+          key={row.label}
+          className="flex items-center gap-2 text-sm font-bold text-black"
+        >
+          <span
+            aria-hidden="true"
+            className="h-3 w-3 shrink-0 rounded-full"
+            style={{ backgroundColor: row.color }}
+          />
+          {row.label}
+        </span>
+      ))}
+    </div>
   );
 }

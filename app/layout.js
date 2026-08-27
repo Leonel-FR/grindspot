@@ -102,7 +102,7 @@ export default function RootLayout({ children }) {
     >
       <LanguageProvider>
         <SessionProvider>
-          <body className="flex min-h-full flex-col">
+          <body className="flex min-h-full flex-col bg-[#fbfaf8]">
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

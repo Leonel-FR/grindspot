@@ -42,7 +42,7 @@ export default function FooterContent({ showRefundLink, hasAccess }) {
   const { data: session } = useSession();
 
   return (
-    <footer className="bg-white py-10">
+    <footer className="bg-[#fbfaf8] py-10">
       <div className="mx-auto max-w-345 px-6">
         <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left">
           <div className="max-w-sm">

@@ -39,7 +39,7 @@ export default function MobileFilterSheet({
       role="dialog"
       aria-modal="true"
       aria-label={t("mobileFilterSheet.title")}
-      className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-[#fbfaf8] lg:hidden"
     >
       <header className="flex items-center justify-between px-5 py-4">
         <h2 className="text-xl font-bold text-black">

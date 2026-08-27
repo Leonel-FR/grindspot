@@ -1,9 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/components/LanguageProvider";
-import ToggleFilterButton from "@/components/ToggleFilterButton";
 
 const VIEWS = ["grid", "map"];
+
+// Every selectable pill in the panel — view switch, filter chips, the two
+// on/off toggles — shares this look: red fill when active, plain outline
+// when not.
+const chipClasses = (active) =>
+  `cursor-pointer rounded-2xl border-2 px-4 py-2 font-bold transition-colors ${
+    active
+      ? "border-[#FF5A5F] bg-[#FF5A5F] text-white"
+      : "border-gray-300 bg-white text-black"
+  }`;
 
 // Shared body of the filter panel — the controls only, no surrounding shell.
 // Rendered inside both the desktop FilterSidebar and the mobile
@@ -30,6 +39,19 @@ export default function FilterPanel({
     );
   };
 
+  const toggles = [
+    {
+      active: openNow,
+      onChange: onOpenNowChange,
+      label: t("filterBar.openNow"),
+    },
+    {
+      active: notClosingSoon,
+      onChange: onNotClosingSoonChange,
+      label: t("filterBar.notClosingSoon"),
+    },
+  ];
+
   return (
     <div>
       {/* Grid/Map switch — only shown in the panel below lg; on lg+ it lives
@@ -54,11 +76,7 @@ export default function FilterPanel({
                 role="radio"
                 aria-checked={isActive}
                 onClick={() => onViewChange(v)}
-                className={`flex-1 cursor-pointer rounded-2xl border-2 px-4 py-2 font-bold transition-colors focus:outline-none ${
-                  isActive
-                    ? "border-[#FF5A5F] bg-[#FF5A5F] text-white"
-                    : "border-gray-300 bg-white text-black"
-                }`}
+                className={`flex-1 focus:outline-none ${chipClasses(isActive)}`}
               >
                 {t(`filterBar.view${v === "grid" ? "Grid" : "Map"}`)}
               </button>
@@ -81,11 +99,7 @@ export default function FilterPanel({
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => toggleOption(section, option)}
-                  className={`cursor-pointer rounded-2xl border-2 px-4 py-2 font-bold text-black transition-colors ${
-                    isSelected
-                      ? "border-[#FF5A5F]"
-                      : "border-gray-300 bg-white"
-                  }`}
+                  className={chipClasses(isSelected)}
                 >
                   {option}
                 </button>
@@ -96,16 +110,17 @@ export default function FilterPanel({
       ))}
 
       <div className="flex flex-wrap gap-2">
-        <ToggleFilterButton
-          checked={openNow}
-          onChange={onOpenNowChange}
-          label={t("filterBar.openNow")}
-        />
-        <ToggleFilterButton
-          checked={notClosingSoon}
-          onChange={onNotClosingSoonChange}
-          label={t("filterBar.notClosingSoon")}
-        />
+        {toggles.map((toggle) => (
+          <button
+            key={toggle.label}
+            type="button"
+            aria-pressed={toggle.active}
+            onClick={() => toggle.onChange(!toggle.active)}
+            className={chipClasses(toggle.active)}
+          >
+            {toggle.label}
+          </button>
+        ))}
       </div>
 
       {hasActiveFilters && onClearAll && (

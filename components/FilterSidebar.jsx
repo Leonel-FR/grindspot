@@ -46,7 +46,7 @@ export default function FilterSidebar({
       id="filter-panel"
       aria-label={t("mobileFilterSheet.title")}
       inert={!open}
-      className={`fixed top-16 left-0 z-30 hidden h-[calc(100dvh-4rem)] w-80 flex-col border-r-2 border-gray-200 bg-white transition-transform duration-300 ease-out will-change-transform motion-reduce:transition-none lg:flex ${
+      className={`fixed top-16 left-0 z-30 hidden h-[calc(100dvh-4rem)] w-80 flex-col border-r-2 border-gray-200 bg-[#fbfaf8] transition-transform duration-300 ease-out will-change-transform motion-reduce:transition-none lg:flex ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
     >

@@ -15,7 +15,7 @@ export default function SpotPageHeader({ hasAccess }) {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="border-b border-gray-200 bg-[#fbfaf8]">
       <div className="mx-auto flex max-w-345 items-center justify-between px-6 py-4">
         <Link
           href="/"
