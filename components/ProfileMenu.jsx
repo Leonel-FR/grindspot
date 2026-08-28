@@ -140,7 +140,12 @@ export default function ProfileMenu({ className = "" }) {
         // up is the only state cue. focus-visible (not focus) means the ring
         // shows only for keyboard focus, never a mouse click, while still
         // keeping the control keyboard-accessible.
-        className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#FF5A5F] font-bold text-white shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa49f] sm:h-11 sm:w-11"
+        //
+        // transform-gpu + backface-hidden: this sits inside the sticky
+        // FilterBar, and mobile Safari otherwise leaves the avatar's shadow
+        // ghosting over the neighbouring Filters button when the viewport
+        // resizes mid-scroll. Its own compositor layer repaints cleanly.
+        className="flex h-10 w-10 transform-gpu cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#FF5A5F] font-bold text-white shadow-md backface-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffa49f] sm:h-11 sm:w-11"
       >
         {image ? (
           <Image

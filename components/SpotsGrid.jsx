@@ -456,10 +456,18 @@ export default function SpotsGrid({
 
       {/* Top bar — sticky in grid view, a transparent overlay in map view
           (the map is fixed behind everything then). lg:h-16 is load-bearing:
-          FilterSidebar anchors to top-16 / calc(100dvh-4rem). */}
+          FilterSidebar anchors to top-16 / calc(100dvh-4rem).
+
+          translateZ(0) + backface-visibility:hidden force this onto its own
+          compositor layer. Without it, mobile Safari fails to invalidate the
+          sticky region when the visible viewport changes (URL bar hiding on
+          scroll, keyboard opening on the search field) and repaints a stale
+          frame — the avatar and Filters button then appear to overlap until a
+          full reflow (opening/closing MobileFilterSheet toggles body overflow)
+          clears it. Owning a layer makes the browser repaint the bar cleanly. */}
       <div
         className={cn(
-          "z-40 px-6 py-3 sm:px-8 lg:flex lg:h-16 lg:items-center lg:px-12 lg:py-0",
+          "z-40 px-6 py-3 transform-gpu backface-hidden sm:px-8 lg:flex lg:h-16 lg:items-center lg:px-12 lg:py-0",
           isMapView
             ? "fixed inset-x-0 top-0"
             : "sticky top-0 bg-[#fbfaf8]",

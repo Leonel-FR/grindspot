@@ -46,7 +46,11 @@ export default function FilterBar({
         onClick={onToggleFilters}
         aria-expanded={filtersOpen}
         aria-controls="filter-panel"
-        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-2 border-[#FF5A5F] bg-white px-4 py-2 font-bold text-[#FF5A5F] shadow-md transition-colors focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
+        // transform-gpu + backface-hidden: like the avatar next to it, this
+        // lives in the sticky bar and mobile Safari otherwise repaints it from
+        // a stale layer when the URL bar / keyboard resizes the viewport,
+        // making it appear to overlap the avatar until a full reflow.
+        className="flex shrink-0 transform-gpu cursor-pointer items-center gap-1.5 rounded-3xl border-2 border-[#FF5A5F] bg-white px-4 py-2 font-bold text-[#FF5A5F] shadow-md backface-hidden transition-colors focus:border-[#ffa49f] focus:ring-2 focus:ring-[#ffa49f] focus:outline-none"
       >
         {filtersOpen
           ? t("filterBar.closeFilters")
